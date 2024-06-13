@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.androidApplication)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -29,10 +30,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -40,4 +44,23 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // FIREBASE
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ui.auth)
+
+    // FACEBOOK SDK
+    implementation(libs.facebook.android.sdk) {
+        exclude(group = "com.android.support", module = "customtabs")
+    }
+
+    // ADD EXPLICITLY THE BROWSER DEPENDENCY
+    implementation("androidx.browser:browser:1.4.0")
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core:1.13.0")
+        force("androidx.media:media:1.0.0")
+    }
 }
