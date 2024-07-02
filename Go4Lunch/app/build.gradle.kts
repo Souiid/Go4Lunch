@@ -47,7 +47,10 @@ dependencies {
 
     // FIREBASE
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     implementation(libs.firebase.ui.auth)
+
 
     // FACEBOOK SDK
     implementation(libs.facebook.android.sdk) {
@@ -56,6 +59,10 @@ dependencies {
 
     // ADD EXPLICITLY THE BROWSER DEPENDENCY
     implementation("androidx.browser:browser:1.4.0")
+    implementation("jp.wasabeef:glide-transformations:4.3.0")
+
+    implementation("com.github.bumptech.glide:glide:4.11.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
 }
 
 configurations.all {
