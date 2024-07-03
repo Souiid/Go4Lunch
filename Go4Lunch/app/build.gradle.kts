@@ -45,12 +45,16 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    
+
     // FIREBASE
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.ui.auth)
+
+    //GOOGLE MAPS
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
 
     // FACEBOOK SDK
@@ -67,6 +71,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.11.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
+
 }
 
 configurations.all {
