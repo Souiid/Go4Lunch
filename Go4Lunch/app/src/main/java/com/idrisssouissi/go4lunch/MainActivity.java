@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.idrisssouissi.go4lunch.databinding.ActivityMainBinding;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
         Glide.with(this)
                 .load(R.drawable.pic)
                 .transform(new CenterCrop(), new BlurTransformation(25))

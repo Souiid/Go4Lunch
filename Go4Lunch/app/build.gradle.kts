@@ -62,6 +62,9 @@ dependencies {
     implementation("androidx.browser:browser:1.4.0")
     implementation("jp.wasabeef:glide-transformations:4.3.0")
 
+    implementation("com.mikhaellopez:circularimageview:4.3.1")
+
+
     implementation("com.github.bumptech.glide:glide:4.11.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
 }
