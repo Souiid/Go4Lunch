@@ -21,12 +21,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.idrisssouissi.go4lunch.databinding.FragmentMapBinding;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
+    private FragmentMapBinding binding;
 
 
     public static MapFragment newInstance() {
@@ -43,7 +46,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        binding = FragmentMapBinding.inflate(getLayoutInflater(), container, false);
+        Places.initialize(getActivity().getApplicationContext(), "AIzaSyAAraXL4skscBsmQ1z4Nt2xFszLnnajDa0");
+
 
         // Initialisation du fragment de la carte
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -52,7 +58,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             mapFragment.getMapAsync(this);
         }
 
-        return view;
+        clickOnSearchButton();
+
+        return binding.getRoot();
     }
 
     @Override
@@ -64,6 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
 
         // Vérifiez les permissions et obtenez la localisation
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -86,5 +95,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         }
                     }
                 });
+
+
+        binding.searchButton.setVisibility(View.INVISIBLE);
+// Add these lines in the onMapReady method
+        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+            @Override
+            public void onCameraMove() {
+                binding.searchButton.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    void clickOnSearchButton() {
+        binding.searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

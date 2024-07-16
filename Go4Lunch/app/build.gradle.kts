@@ -70,11 +70,11 @@ dependencies {
 
     implementation("com.mikhaellopez:circularimageview:4.3.1")
 
-
     implementation("com.github.bumptech.glide:glide:4.11.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
 
-    implementation("com.borjabravo:simpleratingbar:1.0.0")
+    implementation(libs.places)
+
 
 
 }
