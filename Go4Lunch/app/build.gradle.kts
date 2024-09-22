@@ -1,4 +1,3 @@
-import java.util.regex.Pattern.compile
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -75,8 +74,19 @@ dependencies {
 
     implementation(libs.places)
 
+    implementation(libs.okhttp)
+    implementation(libs.gson)
 
+    //Dagger
+    implementation(libs.dagger)
+    annotationProcessor(libs.dagger.compiler)
+    annotationProcessor(libs.dagger.android.processor)
 
+    //Glide
+    implementation(libs.github.glide)
+    annotationProcessor(libs.glide.compiler)
+
+    implementation(libs.fragment.ktx)
 }
 
 configurations.all {

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.RestaurantDetailsActivity">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_back"
+        android:elevation="3dp"
+        android:background="@color/fui_transparent"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/restaurant_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/pic" />
+
+    <RelativeLayout
+        android:id="@+id/restaurant_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/restaurant_image"
+        android:background="@color/orange"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/restaurant_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Le Zinc"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+
+        <LinearLayout
+            android:id="@+id/star_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toEndOf="@id/restaurant_name"
+            android:layout_alignTop="@id/restaurant_name"
+            android:layout_alignBottom="@id/restaurant_name"
+            android:layout_marginStart="10dp">
+            <!-- Les étoiles seront ajoutées ici dynamiquement -->
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/restaurant_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="French restaurant - 12 rue du Faubourg Poissonnière"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/restaurant_name"
+            android:layout_marginTop="8dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/restaurant_info"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:id="@+id/phoneButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_phone"
+                app:tint="@color/orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CALL"
+                android:textColor="@color/orange"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/likeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_star"
+                app:tint="@color/orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LIKE"
+                android:textColor="@color/orange"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/websiteButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_globe"
+                app:tint="@color/orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WEBSITE"
+                android:textColor="@color/orange"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/participationButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/restaurant_info"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="-25dp"
+        android:background="@drawable/circle_button"
+        android:elevation="10dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_check"
+        app:tint="@color/gray" />
+
+    <LinearLayout
+        android:id="@+id/person_list_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/action_bar"
+        android:background="@android:color/darker_gray"
+        android:orientation="horizontal" />
+
+
+</RelativeLayout>

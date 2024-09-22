@@ -1,9 +1,14 @@
 [versions]
 agp = "8.3.1"
 browser = "1.8.0"
+compilerVersion = "4.12.0"
+dagger = "2.48.1"
 facebookAndroidSdk = "5.0.0"
 firebaseBom = "33.1.0"
 firebaseUiAuth = "7.2.0"
+fragmentKtx = "1.8.3"
+glideVersion = "4.12.0"
+gson = "2.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -11,17 +16,25 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+okhttp = "4.9.1"
 places = "2.6.0"
 playServicesLocation = "21.3.0"
 playServicesMaps = "19.0.0"
 
 [libraries]
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebookAndroidSdk" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-ui-auth = { module = "com.firebaseui:firebase-ui-auth", version.ref = "firebaseUiAuth" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+github-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glideVersion" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compilerVersion" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -29,6 +42,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 places = { module = "com.google.android.libraries.places:places", version.ref = "places" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }

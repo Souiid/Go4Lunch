@@ -4,19 +4,103 @@
     android:layout_height="100dp"
     android:layout_margin="16dp">
 
-    <TextView
-        android:id="@+id/restaurantNameTV"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/left_column"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Restaurant Name"/>
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/restaurantIV"
+        android:layout_marginEnd="5dp"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/restaurantNameTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Le Zinc"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginRight="8dp"/>
+
+            <TextView
+                android:id="@+id/distanceTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="120m"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/restaurantInfoTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="French - 12 rue du Faubourg Poissonnière"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:id="@+id/icon_person"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mate"
+                android:layout_marginRight="4dp"/>
+
+            <TextView
+                android:id="@+id/peopleCountTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(2)"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+
+        <!-- Ligne 3 : Heures d'ouverture et étoiles -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/hourlyTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Open until 7pm"
+                android:textSize="14sp"/>
+
+            <LinearLayout
+                android:id="@+id/star_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- Les étoiles seront ajoutées ici dynamiquement -->
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
 
     <ImageView
-        android:id="@+id/restaurantImageIV"
-        android:layout_alignParentEnd="true"
+        android:id="@+id/restaurantIV"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/pic"/>
+        android:src="@drawable/pic"
+        android:layout_marginEnd="20dp"/>
 
 </RelativeLayout>

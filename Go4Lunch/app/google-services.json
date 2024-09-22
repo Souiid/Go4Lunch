@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "26433778553-ha57lik3levscn79i8b0nte2d42e3b6r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.idrisssouissi.go4lunch",
+            "certificate_hash": "eceb94f036b63da19e8ff8562f615cccce61d839"
+          }
+        },
+        {
           "client_id": "26433778553-h5rjk2k8q46ep3dc828qo6ma18mi8bqe.apps.googleusercontent.com",
           "client_type": 3
         }

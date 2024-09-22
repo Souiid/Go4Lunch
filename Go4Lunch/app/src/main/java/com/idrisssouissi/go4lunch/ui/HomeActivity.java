@@ -1,11 +1,11 @@
-package com.idrisssouissi.go4lunch;
+package com.idrisssouissi.go4lunch.ui;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,32 +14,28 @@ import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import android.Manifest;
-import android.content.pm.PackageManager;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.idrisssouissi.go4lunch.Go4Lunch;
+import com.idrisssouissi.go4lunch.R;
+import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
 
-import com.idrisssouissi.go4lunch.MapFragment;
-import com.idrisssouissi.go4lunch.ListFragment;
-import com.idrisssouissi.go4lunch.MatesFragment;
+
+import javax.inject.Inject;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final int NAVIGATION_MAP = R.id.navigation_map;
-    private static final int NAVIGATION_LIST = R.id.navigation_list;
-    private static final int NAVIGATION_MATES = R.id.navigation_mates;
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     ActivityHomeBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Go4Lunch.getAppComponent().inject(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
@@ -69,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
                 .into((ImageView) binding.navView.getHeaderView(0).findViewById(R.id.headerIV));
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
@@ -88,6 +86,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
