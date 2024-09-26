@@ -1,6 +1,5 @@
 package com.idrisssouissi.go4lunch.ui;
 
-import static com.google.gson.reflect.TypeToken.get;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,14 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,29 +27,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
-import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.FragmentMapBinding;
-
-import java.io.IOException;
 import java.util.List;
-
-import javax.inject.Inject;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
+    private  GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private FragmentMapBinding binding;
     private static final String API_KEY = "AIzaSyAAraXL4skscBsmQ1z4Nt2xFszLnnajDa0";
@@ -101,11 +86,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.d("aaa", "USERS COUNT:" + users.size());
 
             if (users != null && restaurants != null) {
-                Log.d("aaa", "RESTAURANTS COUNT:" + restaurants.size());
-                Log.d("aaa", "USERS COUNT:" + users.size());
                 if (mMap != null) {
                     mMap.clear();
-                    Log.d("aaa", "USER COUNT:" + users.size());
                     List<String> selectedRestaurantIDs = viewModel.getAllSelectedRestaurantID(users, restaurants);
                     for (Restaurant restaurant : restaurants) {
                         LatLng location = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());

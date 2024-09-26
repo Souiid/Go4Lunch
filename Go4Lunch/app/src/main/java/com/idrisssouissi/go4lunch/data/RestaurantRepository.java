@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -46,6 +48,10 @@ public class RestaurantRepository {
             }
         }
         return null;
+    }
+
+    public void getRestaurantContact(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber) {
+        restaurantApiService.getRestaurantDetailsFromId(restaurantId, website, phoneNumber);
     }
 
     public MutableLiveData<LatLng> getLastLocation() {

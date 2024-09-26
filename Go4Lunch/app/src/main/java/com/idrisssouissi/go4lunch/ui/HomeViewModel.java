@@ -69,6 +69,8 @@ public class HomeViewModel extends ViewModel {
     }
 
 
+
+
     public List<String> getAllSelectedRestaurantID(List<User> users, List<Restaurant> restaurants) {
         List<String> selectedRestaurantIDs = new ArrayList<>();
 

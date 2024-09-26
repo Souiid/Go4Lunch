@@ -12,6 +12,8 @@ import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -39,6 +41,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
             }
         }
         return null;
+    }
+
+    public void getWebsiteAndPhoneNumber(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber) {
+        restaurantRepository.getRestaurantContact(restaurantId, website, phoneNumber);
+
     }
 
     public Boolean getIsRestaurantSelected(String restaurantId) {

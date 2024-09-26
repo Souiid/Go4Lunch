@@ -1,13 +1,17 @@
 package com.idrisssouissi.go4lunch.ui;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -25,6 +29,7 @@ import java.util.Optional;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CALL_PHONE = 1;
     ActivityRestaurantDetailsBinding binding;
     String restaurantID;
     private RestaurantDetailsViewModel viewModel;
@@ -48,6 +53,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         restaurantID = getIntent().getStringExtra("restaurantID");
         restaurant = viewModel.getRestaurant(restaurantID);
 
+        viewModel.getWebsiteAndPhoneNumber(restaurantID, this::clickOnWebsiteButton, this::clickOnPhoneButton);
+
         binding.restaurantName.setText(restaurant.getName());
         binding.restaurantAddress.setText(restaurant.getAddress());
 
@@ -63,9 +70,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         }
 
         clickOnBackButton();
-        clickOnPhoneButton();
         clickOnLikeButton();
-        clickOnWebsiteButton();
         clickOnParticipationButton();
     }
 
@@ -75,10 +80,16 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
     }
 
-    public void clickOnPhoneButton() {
+    public void clickOnPhoneButton(Optional<String> phoneNumber) {
         binding.phoneButton.setOnClickListener(v -> {
-            if (restaurant.getPhoneNumber().isPresent()) {
-                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + restaurant.getPhoneNumber())));
+            if (phoneNumber != null && phoneNumber.isPresent()) {
+                String phone = phoneNumber.get();
+
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
+                } else {
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone)));
+                }
             } else {
                 Toast.makeText(this, "No phone number found", Toast.LENGTH_SHORT).show();
             }
@@ -91,13 +102,17 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void clickOnWebsiteButton() {
+    private void clickOnWebsiteButton(Optional<String> website) {
         binding.websiteButton.setOnClickListener(v -> {
-            Optional<String> websiteOptional = restaurant.getWebsite();
-
-            if (websiteOptional != null && websiteOptional.isPresent()) {
-                String website = websiteOptional.get();
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(website)));
+            if (website != null && website.isPresent()) {
+                String url = website.get();
+                Log.d("ooo", "URL: " + url);
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "No application can handle this request. Please install a web browser.", Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(this, "No website found", Toast.LENGTH_SHORT).show();
             }

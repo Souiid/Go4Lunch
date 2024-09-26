@@ -19,6 +19,7 @@ import okhttp3.Response;
 public class RestaurantApiService {
 
     private static final String API_KEY = "AIzaSyAAraXL4skscBsmQ1z4Nt2xFszLnnajDa0";
+    OkHttpClient client = new OkHttpClient();
 
     public void fetchNearbyRestaurants(double latitude, double longitude, Consumer<List<Restaurant>> callback) {
         OkHttpClient client = new OkHttpClient();
@@ -48,6 +49,40 @@ public class RestaurantApiService {
         }).start();
     }
 
+ //  private void getRestaurantNameFromId(String restaurantId, Consumer<String> callback) {
+ //      String url = "https://maps.googleapis.com/maps/api/place/details/json" +
+ //              "?place_id=" + restaurantId +
+ //              "&key=" + API_KEY;
+ //
+ //      Request request = new Request.Builder()
+ //              .url(url)
+ //              .build();
+ //
+ //      new Thread(() -> {
+ //          try (Response response = client.newCall(request).execute()) {
+ //              if (response.isSuccessful()) {
+ //                  assert response.body() != null;
+ //                  String jsonData = response.body().string();
+ //                  Gson gson = new Gson();
+ //                  JsonObject jsonObject = gson.fromJson(jsonData, JsonObject.class);
+ //
+ //                  // Récupère l'objet "result" au lieu d'une array "results"
+ //                  JsonObject resultObject = jsonObject.getAsJsonObject("result");
+ //
+ //                  // Récupère le nom du restaurant
+ //                  String restaurantName = resultObject.get("name").getAsString();
+ //
+ //                  // Utilise le callback pour renvoyer le nom
+ //                  callback.accept(restaurantName);
+ //              } else {
+ //                  Log.e("aaa", "Request failed: " + response);
+ //              }
+ //          } catch (IOException e) {
+ //              Log.e("aaa", "Request error", e);
+ //          }
+ //      }).start();
+ //  }
+
     private List<Restaurant> parseAndReturnRestaurants(String jsonData) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(jsonData, JsonObject.class);
@@ -56,6 +91,7 @@ public class RestaurantApiService {
         for (int i = 0; i < results.size(); i++) {
             JsonObject restaurant = results.get(i).getAsJsonObject();
             String placeId = restaurant.get("place_id").getAsString();
+            Log.d("ddd", "RESTAURANT ID: " + placeId);
             String name = restaurant.get("name").getAsString();
             String address = restaurant.get("vicinity").getAsString();
             JsonObject location = restaurant.getAsJsonObject("geometry").getAsJsonObject("location");
@@ -114,6 +150,51 @@ public class RestaurantApiService {
         return restaurants;
     }
 
+    void getRestaurantDetailsFromId(String restaurantId, Consumer<Optional<String>> websiteCallback, Consumer<Optional<String>> phoneCallback) {
+        String url = "https://maps.googleapis.com/maps/api/place/details/json" +
+                "?place_id=" + restaurantId +
+                "&fields=name,website,formatted_phone_number" +
+                "&key=" + API_KEY;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        new Thread(() -> {
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    String jsonData = response.body().string();
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(jsonData, JsonObject.class);
+
+                    // Récupère l'objet "result"
+                    JsonObject resultObject = jsonObject.getAsJsonObject("result");
+
+                    // Récupère le site web du restaurant, si disponible
+                    if (resultObject.has("website")) {
+                        String website = resultObject.get("website").getAsString();
+                        websiteCallback.accept(Optional.ofNullable(website));
+                    } else {
+                        websiteCallback.accept(Optional.empty());
+                    }
+
+                    // Récupère le numéro de téléphone, si disponible
+                    if (resultObject.has("formatted_phone_number")) {
+                        String phoneNumber = resultObject.get("formatted_phone_number").getAsString();
+                        phoneCallback.accept(Optional.ofNullable(phoneNumber));
+                    } else {
+                        phoneCallback.accept(Optional.empty());
+                    }
+
+                } else {
+                    Log.e("aaa", "Request failed: " + response);
+                }
+            } catch (IOException e) {
+                Log.e("aaa", "Request error", e);
+            }
+        }).start();
+    }
     private String formatTime(String time) {
         if (time.length() == 4) {
             return time.substring(0, 2) + ":" + time.substring(2);
