@@ -2,6 +2,7 @@ package com.idrisssouissi.go4lunch.ui;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -51,7 +52,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static MapFragment newInstance() {
         return new MapFragment();
     }
+    private OnRestaurantSelectedListener callback;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            callback = (OnRestaurantSelectedListener) context;  // Assurez-vous que l'Activity implémente l'interface
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnRestaurantSelectedListener");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,9 +117,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     mMap.setOnMarkerClickListener(marker -> {
                         String restaurantID = marker.getSnippet();
                         if (restaurantID != null) {
-                            Intent intent = new Intent(getActivity(), RestaurantDetailsActivity.class);
-                            intent.putExtra("restaurantID", restaurantID);
-                            startActivity(intent);
+                            callback.onRestaurantSelected(restaurantID);  // Demander à `HomeActivity` de gérer cela
                         }
                         return false;
                     });

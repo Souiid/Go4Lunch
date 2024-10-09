@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.google.firebase.Timestamp;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,14 +17,16 @@ public class User {
     Map<String, Object> selectedRestaurant;
     String photoUrl;
     Optional<Bitmap> photo;
+    List<String> restaurantLikeIDs;
 
-    public User(String id, String email,String name, String photoUrl, Map<String, Object>  selectedRestaurant) {
+    public User(String id, String email,String name, String photoUrl, Map<String, Object>  selectedRestaurant, List<String> restaurantLikeIDs) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.selectedRestaurant = selectedRestaurant;
         this.photoUrl = photoUrl;
         this.photo = Optional.empty();
+        this.restaurantLikeIDs = restaurantLikeIDs;
     }
 
     public String getId() {
@@ -78,5 +81,13 @@ public class User {
     Date getSelectedRestaurantDate() {
         Timestamp selectedRestaurantTimestamp = selectedRestaurant != null ? (Timestamp) selectedRestaurant.get("date") : null;
         return selectedRestaurantTimestamp != null ? selectedRestaurantTimestamp.toDate() : null;
+    }
+
+    public List<String> getRestaurantLikeIDs() {
+        return restaurantLikeIDs;
+    }
+
+    public void setRestaurantLikeIDs(List<String> restaurantLikeIDs) {
+        this.restaurantLikeIDs = restaurantLikeIDs;
     }
 }

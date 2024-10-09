@@ -50,10 +50,12 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public Boolean getIsRestaurantSelected(String restaurantId) {
         User currentUser = getCurrentUser();
-        Log.d("aaa", "Current user selected restaurant: " + currentUser.getSelectedRestaurant().get("id"));
-        Log.d("aaa", "Selected restaurant id: " + restaurantId);
-        Log.d("aaa", "Is restaurant selected: " + (currentUser.getSelectedRestaurant().get("id").equals(restaurantId)));
         return (currentUser.getSelectedRestaurant().get("id").equals(restaurantId));
+    }
+
+    public Boolean getIsRestaurantLiked(String restaurantId) {
+        User currentUser = getCurrentUser();
+        return (currentUser.getRestaurantLikeIDs().contains(restaurantId));
     }
 
     public static class Factory implements ViewModelProvider.Factory {
