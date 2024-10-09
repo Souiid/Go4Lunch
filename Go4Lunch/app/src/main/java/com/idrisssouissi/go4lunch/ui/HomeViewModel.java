@@ -68,9 +68,6 @@ public class HomeViewModel extends ViewModel {
         return restaurantRepository.getRestaurantsLiveData();
     }
 
-
-
-
     public List<String> getAllSelectedRestaurantID(List<User> users, List<Restaurant> restaurants) {
         List<String> selectedRestaurantIDs = new ArrayList<>();
 
@@ -90,6 +87,10 @@ public class HomeViewModel extends ViewModel {
 
     public MutableLiveData<LatLng> getLastLocation() {
         return restaurantRepository.getLastLocation();
+    }
+
+    public void refreshUsers() {
+        userRepository.getAllUsers();
     }
 
     public void setLastLocation(Double latitude, Double longitude) {

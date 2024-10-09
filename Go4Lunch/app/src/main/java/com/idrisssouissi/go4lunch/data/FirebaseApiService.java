@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -69,9 +70,10 @@ public class FirebaseApiService {
                             String name = document.getString("name");
                             String photoUrl = document.getString("photoUrl");
                             Map<String, Object> selectedRestaurantMap = (Map<String, Object>) document.get("selectedRestaurant");
+                            List<String> restaurantLikeIDs = (List<String>) document.get("restaurantLikeIDs");
 
                             // Créer un objet User avec les informations récupérées
-                            User user = new User(id, email, name, photoUrl, selectedRestaurantMap);
+                            User user = new User(id, email, name, photoUrl, selectedRestaurantMap, restaurantLikeIDs);
                             userList.add(user);
                         }
                         Log.d("aaa", "FIRESTORE Utilisateurs récupérés avec succès.");
@@ -83,13 +85,18 @@ public class FirebaseApiService {
                 });
     }
 
-    public void updateSelectedRestaurant(String restaurantId) {
+    public void updateSelectedRestaurant(String restaurantId, Boolean isSelected) {
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         DocumentReference userDocRef = db.collection("users").document(userId);
 
         Map<String, Object> selectedRestaurant = new HashMap<>();
         selectedRestaurant.put("id", restaurantId);
         selectedRestaurant.put("date", Timestamp.now());
+
+        if (!isSelected) {
+            selectedRestaurant.put("id", "");
+
+        }
 
         userDocRef.update("selectedRestaurant", selectedRestaurant)
                 .addOnSuccessListener(aVoid -> {
@@ -99,4 +106,28 @@ public class FirebaseApiService {
                     System.err.println("Error updating document: " + e.getMessage());
                 });
     }
-}
+
+    public void updateRestaurantLikes(String restaurantId, Boolean isLiked) {
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        DocumentReference userDocRef = db.collection("users").document(userId);
+
+        if (isLiked) {
+            // Ajouter le restaurant à la liste
+            userDocRef.update("restaurantLikeIDs", FieldValue.arrayUnion(restaurantId))
+                    .addOnSuccessListener(aVoid -> {
+                        System.out.println("Restaurant ajouté aux likes avec succès !");
+                    })
+                    .addOnFailureListener(e -> {
+                        System.err.println("Erreur lors de l'ajout du like : " + e.getMessage());
+                    });
+        } else {
+            // Retirer le restaurant de la liste
+            userDocRef.update("restaurantLikeIDs", FieldValue.arrayRemove(restaurantId))
+                    .addOnSuccessListener(aVoid -> {
+                        System.out.println("Restaurant retiré des likes avec succès !");
+                    })
+                    .addOnFailureListener(e -> {
+                        System.err.println("Erreur lors du retrait du like : " + e.getMessage());
+                    });
+        }
+    }}

@@ -1,8 +1,11 @@
 package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
@@ -13,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.Manifest;
 
 import com.bumptech.glide.Glide;
@@ -29,12 +34,12 @@ import javax.inject.Inject;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-public class HomeActivity extends AppCompatActivity {
-
+public class HomeActivity extends AppCompatActivity implements OnRestaurantSelectedListener  {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     ActivityHomeBinding binding;
+    private HomeViewModel viewModel;
 
 
     @Override
@@ -42,7 +47,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
+        viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
         Go4Lunch.getAppComponent().inject(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -114,6 +120,24 @@ public class HomeActivity extends AppCompatActivity {
         // Pour afficher le premier fragment par défaut
         if (savedInstanceState == null) {
             binding.bottomNavigation.setSelectedItemId(R.id.navigation_map);
+        }
+
+
+    }
+
+    @Override
+    public void onRestaurantSelected(String restaurantID) {
+        Intent intent = new Intent(this, RestaurantDetailsActivity.class);
+        intent.putExtra("restaurantID", restaurantID);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            Log.d("HomeActivity", "onActivityResult called from RestaurantDetailsActivity");
+            viewModel.refreshUsers();
         }
     }
 }

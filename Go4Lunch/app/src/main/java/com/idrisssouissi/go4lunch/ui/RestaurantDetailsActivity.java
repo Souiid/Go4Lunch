@@ -35,6 +35,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private RestaurantDetailsViewModel viewModel;
     private Restaurant restaurant;
     FirebaseApiService firebaseApiService = new FirebaseApiService();
+    Boolean isRestaurantSelected = false;
+    Boolean isRestaurantLiked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +65,10 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 .placeholder(R.drawable.pic)
                 .into(binding.restaurantImage);
 
-       Boolean isRestaurantSelected = viewModel.getIsRestaurantSelected(restaurantID);
-
-        if (isRestaurantSelected) {
-            binding.participationButton.setImageTintList(getResources().getColorStateList(R.color.green));
-        }
+        isRestaurantSelected = viewModel.getIsRestaurantSelected(restaurantID);
+        isRestaurantLiked = viewModel.getIsRestaurantLiked(restaurantID);
+        setLikeImageView();
+        setTintParticipationButton();
 
         clickOnBackButton();
         clickOnLikeButton();
@@ -76,6 +77,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     private void clickOnBackButton() {
         binding.backButton.setOnClickListener(v -> {
+            Intent returnIntent = new Intent();
+            setResult(RESULT_OK, returnIntent);
             finish();
         });
     }
@@ -98,7 +101,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     private void clickOnLikeButton() {
         binding.likeButton.setOnClickListener(v -> {
-
+            isRestaurantLiked = !isRestaurantLiked;
+            setLikeImageView();
+            firebaseApiService.updateRestaurantLikes(restaurantID, isRestaurantLiked);
         });
     }
 
@@ -106,7 +111,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding.websiteButton.setOnClickListener(v -> {
             if (website != null && website.isPresent()) {
                 String url = website.get();
-                Log.d("ooo", "URL: " + url);
                 try {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(browserIntent);
@@ -122,8 +126,25 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     @SuppressLint("UseCompatLoadingForColorStateLists")
     private void clickOnParticipationButton() {
         binding.participationButton.setOnClickListener(v -> {
-            binding.participationButton.setImageTintList(getResources().getColorStateList(R.color.green));
-            firebaseApiService.updateSelectedRestaurant(restaurantID);
+            isRestaurantSelected = !isRestaurantSelected;
+            setTintParticipationButton();
+            firebaseApiService.updateSelectedRestaurant(restaurantID, isRestaurantSelected);
         });
+    }
+
+    private void setLikeImageView() {
+        if (isRestaurantLiked) {
+            binding.likeImageView.setImageResource(R.drawable.ic_star);
+        } else {
+            binding.likeImageView.setImageResource(R.drawable.ic_empty_star);
+        }
+    }
+
+    private void setTintParticipationButton() {
+        if (isRestaurantSelected) {
+            binding.participationButton.setImageTintList(ContextCompat.getColorStateList(this, R.color.green));
+        } else {
+            binding.participationButton.setImageTintList(ContextCompat.getColorStateList(this, R.color.gray));
+        }
     }
 }
