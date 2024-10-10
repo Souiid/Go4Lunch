@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
+import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.FragmentListBinding;
 
 import java.util.ArrayList;
@@ -28,10 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ListFragment extends Fragment implements RestaurantAdapter.OnRestaurantClickListener{
-
-
-  //  List<Restaurant> restaurantList = new ArrayList<>();
-   LiveData<List<Restaurant>> restaurantsLiveData;
 
     HomeViewModel viewModel;
 
@@ -64,12 +62,6 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //restaurantList.add(new Restaurant("1", "Le Gourmet", "123 Rue de Paris", 48.8566, 2.3522, String.valueOf(Optional.of("Français")), "https://example.com/photo1.jpg"));
-        //restaurantList.add(new Restaurant("2", "Pasta Bella", "456 Avenue de Rome", 41.9028, 12.4964, String.valueOf(Optional.of("Italien")), "https://example.com/photo2.jpg"));
-        //restaurantList.add(new Restaurant("3", "Sushi Time", "789 Rue de Tokyo", 35.6762, 139.6503, String.valueOf(Optional.of("Japonais")), "https://example.com/photo3.jpg"));
-        //restaurantList.add(new Restaurant("4", "The Burger Joint", "101 Rue de New York", 40.7128, -74.0060, String.valueOf(Optional.of("Américain")), "https://example.com/photo4.jpg"));
-        //restaurantList.add(new Restaurant("5", "Mystery Cuisine", "321 Avenue de l'Inconnu", 48.8566, 2.3522, String.valueOf(Optional.empty()), "https://example.com/photo5.jpg"));
-
         viewModel.getLastLocation().observe(getViewLifecycleOwner(), lastLocation -> {
             if (lastLocation != null) {
                 this.lastLocation = lastLocation;
@@ -86,9 +78,29 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                     restaurant.setDistance(distance);
                 }
 
+                List<User> users = viewModel.usersLiveData.getValue();
+
+                for (Restaurant restaurant : restaurants) {
+                    assert users != null;
+                    for (User user : users) {
+                        Log.d("aaa", "GetRestaurantLikeIDs: " + user.getRestaurantLikeIDs());
+                        if(user.getRestaurantLikeIDs().contains(restaurant.getId())) {
+                            Integer restaurantNote = restaurant.getNote().intValue();
+                            Log.d("fff", "RESTAURANT NOTE" + restaurant.getId() +  "AVANT: " + restaurantNote);
+                            restaurant.setNote(restaurantNote + 1);
+                            Log.d("fff", "RESTAURANT NOTE"  + restaurant.getId() + "APRES SET: "   + restaurant.getNote().intValue());                        }
+                    }
+                }
+
+                for (Restaurant restaurant : restaurants) {
+                    Log.d("finalCheck", "Final Restaurant Note: " + restaurant.getId() + ": " + restaurant.getNote());
+                }
+
+
                 RestaurantAdapter adapter = new RestaurantAdapter(restaurants, this);
                 binding.recyclerView.setAdapter(adapter);
                 binding.recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                adapter.updateRestaurants(restaurants);
             }
         });
 

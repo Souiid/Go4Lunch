@@ -31,9 +31,7 @@ public class UserRepository {
     }
 
     public void getAllUsers() {
-        Log.d("aaa", "Fetching all users");
         firebaseApiService.getAllUsers(users -> {
-            Log.d("aaa", "Fetched users in repo" + users.size() + " users");
             usersLiveData.postValue(users);
         });
     }

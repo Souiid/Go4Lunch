@@ -23,7 +23,6 @@ public class RestaurantApiService {
 
     public void fetchNearbyRestaurants(double latitude, double longitude, Consumer<List<Restaurant>> callback) {
         OkHttpClient client = new OkHttpClient();
-
         String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
                 "?location=" + latitude + "," + longitude +
                 "&radius=" + 500 +
@@ -48,40 +47,6 @@ public class RestaurantApiService {
             }
         }).start();
     }
-
- //  private void getRestaurantNameFromId(String restaurantId, Consumer<String> callback) {
- //      String url = "https://maps.googleapis.com/maps/api/place/details/json" +
- //              "?place_id=" + restaurantId +
- //              "&key=" + API_KEY;
- //
- //      Request request = new Request.Builder()
- //              .url(url)
- //              .build();
- //
- //      new Thread(() -> {
- //          try (Response response = client.newCall(request).execute()) {
- //              if (response.isSuccessful()) {
- //                  assert response.body() != null;
- //                  String jsonData = response.body().string();
- //                  Gson gson = new Gson();
- //                  JsonObject jsonObject = gson.fromJson(jsonData, JsonObject.class);
- //
- //                  // Récupère l'objet "result" au lieu d'une array "results"
- //                  JsonObject resultObject = jsonObject.getAsJsonObject("result");
- //
- //                  // Récupère le nom du restaurant
- //                  String restaurantName = resultObject.get("name").getAsString();
- //
- //                  // Utilise le callback pour renvoyer le nom
- //                  callback.accept(restaurantName);
- //              } else {
- //                  Log.e("aaa", "Request failed: " + response);
- //              }
- //          } catch (IOException e) {
- //              Log.e("aaa", "Request error", e);
- //          }
- //      }).start();
- //  }
 
     private List<Restaurant> parseAndReturnRestaurants(String jsonData) {
         Gson gson = new Gson();
@@ -144,7 +109,7 @@ public class RestaurantApiService {
                 website = Optional.ofNullable(restaurant.get("website").getAsString());
             }
 
-            Restaurant restaurantToSave = new Restaurant(placeId, name, address, lat, lng, "", photoUrl, openingHours, phoneNumber, website);
+            Restaurant restaurantToSave = new Restaurant(placeId, name, address, lat, lng, "", photoUrl, openingHours, phoneNumber, website, Optional.of(0));
             restaurants.add(restaurantToSave);
         }
         return restaurants;

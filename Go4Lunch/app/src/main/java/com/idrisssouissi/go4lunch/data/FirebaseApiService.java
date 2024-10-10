@@ -64,7 +64,6 @@ public class FirebaseApiService {
                     if (task.isSuccessful()) {
                         List<User> userList = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
-                            // Récupération manuelle des informations
                             String id = document.getId(); // Utiliser l'ID du document
                             String email = document.getString("email");
                             String name = document.getString("name");
