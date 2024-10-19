@@ -5,5 +5,14 @@
         android:id="@+id/search_item"
         android:icon="@drawable/ic_search"
         android:title="Search"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort"
+        android:iconTint="@color/white"
+        android:title="Sort"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
 </menu>

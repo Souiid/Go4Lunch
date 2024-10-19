@@ -7,8 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,9 +17,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
-
+import android.widget.PopupMenu;
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -89,6 +89,8 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 drawerLayout.closeDrawers();
                 return true;
             }
+
+
         });
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -112,17 +114,53 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, selectedFragment)
                             .commit();
+
+                    // Ajoutez cette ligne pour forcer la mise à jour du menu
+                    invalidateOptionsMenu();
                 }
                 return true;
             }
         });
-
         // Pour afficher le premier fragment par défaut
         if (savedInstanceState == null) {
             binding.bottomNavigation.setSelectedItemId(R.id.navigation_map);
         }
 
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> invalidateOptionsMenu());
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
+        // Vérifiez le fragment actif et définissez la visibilité de l'élément de tri
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        MenuItem sortItem = menu.findItem(R.id.action_sort);
+
+        if (currentFragment instanceof ListFragment) {
+            sortItem.setVisible(true);
+        } else {
+            sortItem.setVisible(false);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sort:
+                showPopupMenu(findViewById(R.id.action_sort));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -139,5 +177,46 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
             Log.d("HomeActivity", "onActivityResult called from RestaurantDetailsActivity");
             viewModel.refreshUsers();
         }
+    }
+
+    private void showPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+
+        // Définir l'action à effectuer lorsqu'un élément du popup menu est sélectionné
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.sort_by_note:
+                        viewModel.sortRestaurantsByNote(true);
+                        Toast.makeText(getApplicationContext(), "Option 1 selected", Toast.LENGTH_SHORT).show();
+                        return true;
+
+                    case R.id.sort_by_note2:
+                        viewModel.sortRestaurantsByNote(false);
+                        return true;
+
+                    case R.id.sort_by_distance:
+                        viewModel.sortRestaurantsByDistance();
+                        Toast.makeText(getApplicationContext(), "Option 2 selected", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.alphabetical_order:
+                        viewModel.sortRestaurantsByName(true);
+                        Toast.makeText(getApplicationContext(), "Option 3 selected", Toast.LENGTH_SHORT).show();
+                        return true;
+
+                    case R.id.alphabetical_order2:
+                        viewModel.sortRestaurantsByName(false);
+                        Toast.makeText(getApplicationContext(), "Option 3 selected", Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
+        popupMenu.show();
     }
 }

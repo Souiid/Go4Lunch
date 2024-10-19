@@ -13,7 +13,7 @@ public class Restaurant {
     double longitude;
     Optional<String> type;
     String photoUrl;
-    Optional<String> distance;
+    Optional<Float> distance;
     String openHours;
     Optional<String> phoneNumber;
     Optional<String> website;
@@ -30,7 +30,7 @@ public class Restaurant {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.type = Optional.ofNullable(type); // Utilisation d'Optional pour le type
+        this.type = Optional.ofNullable(type);
         this.photoUrl = photoUrl;
         this.distance = Optional.empty();
         this.openHours = openHours;
@@ -63,11 +63,11 @@ public class Restaurant {
         return type;
     }
 
-    public void setDistance(String distance) {
+    public void setDistance(Float distance) {
         this.distance = Optional.ofNullable(distance);
     }
 
-    public Optional<String> getDistance() {
+    public Optional<Float> getDistance() {
         return distance;
     }
 
@@ -110,4 +110,6 @@ public class Restaurant {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+
 }

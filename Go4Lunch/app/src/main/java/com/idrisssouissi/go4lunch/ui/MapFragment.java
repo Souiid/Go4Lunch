@@ -3,7 +3,6 @@ package com.idrisssouissi.go4lunch.ui;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -41,12 +40,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private  GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private FragmentMapBinding binding;
-    private static final String API_KEY = "AIzaSyAAraXL4skscBsmQ1z4Nt2xFszLnnajDa0";
+    private static final String API_KEY = "AIzaSyBig97MXmqFVmydv38OkE8d0SXxeCaTbtU";
     private Double latitude;
     private Double longitude;
-
     HomeViewModel viewModel;
-
     LiveData<List<Restaurant>> restaurantsLiveData;
 
     public static MapFragment newInstance() {
@@ -174,8 +171,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 binding.searchButton.setVisibility(View.VISIBLE);
             }
         });
-
-
     }
 
     void clickOnSearchButton() {

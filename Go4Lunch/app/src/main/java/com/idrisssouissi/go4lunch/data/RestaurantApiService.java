@@ -18,7 +18,7 @@ import okhttp3.Response;
 
 public class RestaurantApiService {
 
-    private static final String API_KEY = "AIzaSyAAraXL4skscBsmQ1z4Nt2xFszLnnajDa0";
+    private static final String API_KEY = "AIzaSyBig97MXmqFVmydv38OkE8d0SXxeCaTbtU";
     OkHttpClient client = new OkHttpClient();
 
     public void fetchNearbyRestaurants(double latitude, double longitude, Consumer<List<Restaurant>> callback) {

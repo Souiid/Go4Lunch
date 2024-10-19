@@ -15,6 +15,8 @@ import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -97,16 +99,80 @@ public class HomeViewModel extends ViewModel {
         restaurantRepository.setLastLocation(new LatLng(latitude, longitude));
     }
 
-    public String getDistance(LatLng lastLocation, LatLng restaurantLocation) {
+    // Tri par note (rating)
+    public void sortRestaurantsByNote(Boolean isAscendant) {
+        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
+        if (currentRestaurants != null) {
+            Collections.sort(currentRestaurants, new Comparator<Restaurant>() {
+                @Override
+                public int compare(Restaurant r1, Restaurant r2) {
+                    if (isAscendant) {
+                        return Float.compare(r2.getNote().floatValue(), r1.getNote().floatValue());
+
+                    }else {
+                        return Float.compare(r1.getNote().floatValue(), r2.getNote().floatValue());
+
+                    }
+                }
+            });
+            // Met à jour les restaurants triés dans LiveData
+            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(currentRestaurants);
+        }
+    }
+
+    public void sortRestaurantsByDistance() {
+        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
+        if (currentRestaurants != null) {
+            Collections.sort(currentRestaurants, new Comparator<Restaurant>() {
+                @Override
+                public int compare(Restaurant r1, Restaurant r2) {
+                    if (r1.getDistance().isPresent() && r2.getDistance().isPresent()) {
+                        return Float.compare(r1.getDistance().get(), r2.getDistance().get()); // Tri croissant par distance
+                    } else if (r1.getDistance().isPresent()) {
+                        return -1;
+                    } else if (r2.getDistance().isPresent()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            // Met à jour les restaurants triés dans LiveData
+            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(currentRestaurants);
+        }
+    }
+
+
+    // Tri par nom
+    public void sortRestaurantsByName(Boolean isAscendant) {
+        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
+        if (currentRestaurants != null) {
+            Collections.sort(currentRestaurants, new Comparator<Restaurant>() {
+                @Override
+                public int compare(Restaurant r1, Restaurant r2) {
+                    if (isAscendant) {
+                        return r1.getName().compareToIgnoreCase(r2.getName());
+                    }else {
+                        return r2.getName().compareToIgnoreCase(r1.getName());
+                    }
+                }
+            });
+            // Met à jour les restaurants triés dans LiveData
+            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(currentRestaurants);
+        }
+    }
+
+    public Float getDistance(LatLng lastLocation, LatLng restaurantLocation) {
         float[] results = new float[1];
         Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, restaurantLocation.latitude, restaurantLocation.longitude, results);
+        return results[0];
+    }
 
-        float distanceInMeters = results[0];
-
-        if (distanceInMeters < 1000) {
-            return Math.round(distanceInMeters) + " m";
+    public String formatDistance(Float distance) {
+        if (distance < 1000) {
+            return Math.round(distance) + " m";
         } else {
-            float distanceInKilometers = distanceInMeters / 1000;
+            Float distanceInKilometers = distance / 1000;
             return String.format("%.1f km", distanceInKilometers);
         }
     }

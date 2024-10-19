@@ -24,10 +24,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
     private List<Restaurant> restaurantList;
     private final OnRestaurantClickListener listener;
+    private HomeViewModel viewModel;
 
-    public RestaurantAdapter(List<Restaurant> restaurantList, OnRestaurantClickListener listener) {
+    public RestaurantAdapter(List<Restaurant> restaurantList,
+                             OnRestaurantClickListener listener,
+                             HomeViewModel viewModel) {
         this.restaurantList = new ArrayList<>(restaurantList);
         this.listener = listener;
+        this.viewModel = viewModel;
     }
 
     public void updateRestaurants(List<Restaurant> updatedRestaurants) {
@@ -46,7 +50,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     @Override
     public void onBindViewHolder(RestaurantViewHolder holder, int position) {
         Restaurant currentRestaurant = restaurantList.get(position);
-        holder.bind(currentRestaurant);
+        holder.bind(currentRestaurant, viewModel);
+
         holder.itemView.setOnClickListener(v -> listener.onRestaurantClick(currentRestaurant.getId()));
     }
 
@@ -64,12 +69,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(Restaurant restaurant) {
+        public void bind(Restaurant restaurant, HomeViewModel viewModel) {
             binding.restaurantNameTV.setText(restaurant.getName());
             binding.restaurantInfoTV.setText(restaurant.getAddress());
 
             if (restaurant.getDistance().isPresent()) {
-                binding.distanceTV.setText(restaurant.getDistance().get());
+                Float distance = restaurant.getDistance().get();
+                binding.distanceTV.setText(viewModel.formatDistance(distance));
             }
             binding.hourlyTV.setText(restaurant.getOpenHours());
 

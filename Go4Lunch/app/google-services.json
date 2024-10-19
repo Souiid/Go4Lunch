@@ -14,24 +14,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "26433778553-7a8eqcinej53850gqc3tqhucudh7hjcc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.idrisssouissi.go4lunch",
-            "certificate_hash": "028d0a0b73fb5d642fc2e122db1f92192d1a52f3"
-          }
-        },
-        {
-          "client_id": "26433778553-ha57lik3levscn79i8b0nte2d42e3b6r.apps.googleusercontent.com",
+          "client_id": "26433778553-1pj4iv6k70tljng0koptvf2u9rupbit6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.idrisssouissi.go4lunch",
             "certificate_hash": "eceb94f036b63da19e8ff8562f615cccce61d839"
           }
-        },
-        {
-          "client_id": "26433778553-h5rjk2k8q46ep3dc828qo6ma18mi8bqe.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -43,7 +31,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "26433778553-h5rjk2k8q46ep3dc828qo6ma18mi8bqe.apps.googleusercontent.com",
+              "client_id": "26433778553-d1jgro8vhi706rda0anpcpnggi0r6hrv.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

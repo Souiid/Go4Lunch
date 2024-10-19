@@ -68,13 +68,11 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
             }
         });
 
-
-
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             if (restaurants != null) {
 
                 for (Restaurant restaurant : restaurants) {
-                    String distance = viewModel.getDistance(lastLocation, new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
+                    Float distance = viewModel.getDistance(lastLocation, new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
                     restaurant.setDistance(distance);
                 }
 
@@ -97,7 +95,7 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                 }
 
 
-                RestaurantAdapter adapter = new RestaurantAdapter(restaurants, this);
+                RestaurantAdapter adapter = new RestaurantAdapter(restaurants, this, viewModel);
                 binding.recyclerView.setAdapter(adapter);
                 binding.recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 adapter.updateRestaurants(restaurants);
