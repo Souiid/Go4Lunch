@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:enabled="false"
+        android:icon="@null"
+        android:title="Sort by :" />
+
+    <item
+        android:id="@+id/sort_by_note"
+        android:title="Note (ascending)" />
+
+    <item
+        android:id="@+id/sort_by_note2"
+        android:title="Note (descending)" />
+    <item
+        android:id="@+id/sort_by_distance"
+        android:title="Distance" />
+    <item
+        android:id="@+id/alphabetical_order"
+        android:title="Alphabetical order (A > Z)" />
+
+    <item
+        android:id="@+id/alphabetical_order2"
+        android:title="Alphabetical order (Z > A)" />
+
+
+</menu>
