@@ -8,19 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idrisssouissi.go4lunch.R;
-import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
-import com.idrisssouissi.go4lunch.databinding.RestaurantItemBinding;
+import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.UserItemBinding;
 
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
-    private List<User> userList;
+    private List<UserItem> userList;
 
-    public UserAdapter(List<User> userList) {
+    public UserAdapter(List<UserItem> userList) {
         this.userList = userList;
     }
     @NonNull
@@ -33,7 +33,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        User currentUser = userList.get(position);
+        UserItem currentUser = userList.get(position);
         holder.bind(currentUser);
     }
 
@@ -51,12 +51,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(User user) {
-
-            binding.userInfoTV.setText(user.getName());
+        public void bind(UserItem user) {
+            binding.userInfoTV.setText(user.getName() + " a " + user.getRestaurantName());
             Glide.with(binding.getRoot().getContext())
                     .load(user.getPhotoUrl())
                     .placeholder(R.drawable.pic)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.userIV);
         }
     }

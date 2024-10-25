@@ -17,10 +17,14 @@ import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
+import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.FragmentListBinding;
 import com.idrisssouissi.go4lunch.databinding.FragmentMatesBinding;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MatesFragment extends Fragment {
@@ -58,10 +62,29 @@ public class MatesFragment extends Fragment {
         List<User> userList = viewModel.usersLiveData.getValue();
         List<Restaurant> restaurantList = viewModel.restaurantsLiveData.getValue();
 
-        //TODO: Est ce que je mets le nom du restaurant et je le passe en paramètre dans l'adapter,
-        // le user ou je gére le nom dans la class de l'adapter
+        Map<String, String> restaurantMap = new HashMap<>();
+        if (restaurantList != null) {
+            for (Restaurant restaurant : restaurantList) {
+                restaurantMap.put(restaurant.getId(), restaurant.getName());
+            }
+        }
 
-        binding.recyclerView.setAdapter(new UserAdapter(userList));
+        List<UserItem> userItemList = new ArrayList<>();
+        if (userList != null) {
+            for (User user : userList) {
+                String restaurantName = "Pas encore sélectionné";
+                String selectedRestaurantID = user.getSelectedRestaurantID();
+
+                if (selectedRestaurantID != null && restaurantMap.containsKey(selectedRestaurantID)) {
+                    restaurantName = restaurantMap.get(selectedRestaurantID);
+                }
+
+                UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
+                userItemList.add(userItem);
+            }
+        }
+
+        binding.recyclerView.setAdapter(new UserAdapter(userItemList));
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

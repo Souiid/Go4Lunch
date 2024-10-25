@@ -74,7 +74,7 @@ public class User {
         this.photo = Optional.ofNullable(photo);
     }
 
-    String getSelectedRestaurantID() {
+    public String getSelectedRestaurantID() {
         return selectedRestaurant != null ? (String) selectedRestaurant.get("id") : null;
     }
 
