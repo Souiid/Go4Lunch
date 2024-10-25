@@ -24,6 +24,7 @@ import javax.inject.Inject;
 public class FirebaseApiService {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth auth = FirebaseAuth.getInstance();
 
     @Inject
     public FirebaseApiService() {
@@ -129,4 +130,14 @@ public class FirebaseApiService {
                         System.err.println("Erreur lors du retrait du like : " + e.getMessage());
                     });
         }
-    }}
+    }
+
+    public void signOut() {
+        auth.signOut();
+    }
+
+    public Boolean isUserConnected() {
+        FirebaseUser user = auth.getCurrentUser();
+        return user != null;
+    }
+}

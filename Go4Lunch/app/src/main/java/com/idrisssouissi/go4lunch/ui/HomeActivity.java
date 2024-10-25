@@ -51,6 +51,14 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
         Go4Lunch.getAppComponent().inject(this);
 
+        viewModel.getUserConnectionStatus().observe(this, isConnected -> {
+            if (isConnected != null && !isConnected) {
+                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
@@ -83,7 +91,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                         // Handle the settings action
                         break;
                     case R.id.nav_logout:
-                        // Handle the logout action
+                        viewModel.signOut();
                         break;
                 }
                 drawerLayout.closeDrawers();

@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.maps.model.LatLng;
+import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
@@ -25,23 +26,27 @@ public class HomeViewModel extends ViewModel {
 
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
+    private final FirebaseApiService firebaseApiService;
+    private final MutableLiveData<Boolean> isUserConnected = new MutableLiveData<>();
+
 
     MediatorLiveData<Pair<List<Restaurant>, List<User>>> liveDataMerger = new MediatorLiveData<>();
     LiveData<List<Restaurant>> restaurantsLiveData;
     LiveData<List<User>> usersLiveData;
 
     @Inject
-    public HomeViewModel(RestaurantRepository restaurantRepository, UserRepository userRepository) {
+    public HomeViewModel(RestaurantRepository restaurantRepository, UserRepository userRepository, FirebaseApiService firebaseApiService) {
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
 
         // Initialiser les LiveData
         this.restaurantsLiveData = restaurantRepository.getRestaurantsLiveData();
         this.usersLiveData = userRepository.getUsersLiveData();
+        this.firebaseApiService = firebaseApiService;
 
         // Charger les utilisateurs au démarrage
         userRepository.getAllUsers();
-
+        checkUserConnection();
         // Ajouter des sources au MediatorLiveData
         liveDataMerger.addSource(restaurantsLiveData, restaurants -> {
             onNewData(restaurants, usersLiveData.getValue());
@@ -64,6 +69,20 @@ public class HomeViewModel extends ViewModel {
         } else {
             Log.d("HomeViewModel", "onNewData called but one or both lists are null");
         }
+    }
+
+    public LiveData<Boolean> getUserConnectionStatus() {
+        return isUserConnected;
+    }
+
+    public void checkUserConnection() {
+        isUserConnected.setValue(firebaseApiService.isUserConnected());
+    }
+
+
+    public void signOut() {
+        firebaseApiService.signOut();
+        isUserConnected.setValue(false);
     }
 
     public LiveData<List<Restaurant>> getRestaurants() {
@@ -180,18 +199,19 @@ public class HomeViewModel extends ViewModel {
     public static class Factory implements ViewModelProvider.Factory {
         private final RestaurantRepository restaurantRepository;
         private final UserRepository userRepository;
+        private final FirebaseApiService firebaseApiService;
 
         @Inject
-        public Factory(RestaurantRepository restaurantRepository, UserRepository userRepository) {
+        public Factory(RestaurantRepository restaurantRepository, UserRepository userRepository, FirebaseApiService firebaseApiService) {
             this.restaurantRepository = restaurantRepository;
             this.userRepository = userRepository;
-
+            this.firebaseApiService = firebaseApiService;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(HomeViewModel.class)) {
-                return (T) new HomeViewModel(restaurantRepository, userRepository);
+                return (T) new HomeViewModel(restaurantRepository, userRepository, firebaseApiService);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
