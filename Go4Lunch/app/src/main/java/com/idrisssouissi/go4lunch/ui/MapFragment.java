@@ -88,7 +88,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         clickOnSearchButton();
 
 
-        viewModel.liveDataMerger.observe(getViewLifecycleOwner(), pair ->{
+        viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair ->{
             List<User> users = pair.second;
             List<Restaurant> restaurants = pair.first;
             Log.d("aaa", "RESTAURANTS COUNT:" + restaurants.size());

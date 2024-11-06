@@ -30,7 +30,7 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isUserConnected = new MutableLiveData<>();
 
 
-    MediatorLiveData<Pair<List<Restaurant>, List<User>>> liveDataMerger = new MediatorLiveData<>();
+    MediatorLiveData<Pair<List<Restaurant>, List<User>>> uiStateLiveData = new MediatorLiveData<>();
     LiveData<List<Restaurant>> restaurantsLiveData;
     LiveData<List<User>> usersLiveData;
 
@@ -48,11 +48,11 @@ public class HomeViewModel extends ViewModel {
         userRepository.getAllUsers();
         checkUserConnection();
         // Ajouter des sources au MediatorLiveData
-        liveDataMerger.addSource(restaurantsLiveData, restaurants -> {
+        uiStateLiveData.addSource(restaurantsLiveData, restaurants -> {
             onNewData(restaurants, usersLiveData.getValue());
         });
 
-        liveDataMerger.addSource(usersLiveData, users -> {
+        uiStateLiveData.addSource(usersLiveData, users -> {
             onNewData(restaurantsLiveData.getValue(), users);
         });
     }
@@ -65,7 +65,7 @@ public class HomeViewModel extends ViewModel {
 
     public void onNewData(List<Restaurant> restaurants, List<User> users) {
         if (restaurants != null && users != null) {
-            liveDataMerger.setValue(new Pair<>(restaurants, users));
+            uiStateLiveData.setValue(new Pair<>(restaurants, users));
         } else {
             Log.d("HomeViewModel", "onNewData called but one or both lists are null");
         }

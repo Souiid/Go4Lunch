@@ -49,6 +49,10 @@ public class RestaurantRepository {
         }
         return null;
     }
+             //TODO: Récupérer nom restau qui n'est pas dans la zone
+   // public getRestaurantNameFromID(String restaurantId, Consumer<String> callback) {
+   //
+   // }
 
     public void getRestaurantContact(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber) {
         restaurantApiService.getRestaurantDetailsFromId(restaurantId, website, phoneNumber);
