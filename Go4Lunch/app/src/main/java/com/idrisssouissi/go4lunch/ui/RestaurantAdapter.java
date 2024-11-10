@@ -35,6 +35,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     }
 
     public void updateRestaurants(List<Restaurant> updatedRestaurants) {
+        Log.d("RestaurantAdapter", "Updated restaurants: " + updatedRestaurants.size());
         this.restaurantList = new ArrayList<>(updatedRestaurants);
         notifyDataSetChanged();
     }
@@ -72,15 +73,22 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         public void bind(Restaurant restaurant, HomeViewModel viewModel) {
             binding.restaurantNameTV.setText(restaurant.getName());
             binding.restaurantInfoTV.setText(restaurant.getAddress());
+            Log.d("ttt", "Number of users in adapter: " + restaurant.getNumberOfUsers());
 
             if (restaurant.getDistance().isPresent()) {
                 Float distance = restaurant.getDistance().get();
                 binding.distanceTV.setText(viewModel.formatDistance(distance));
             }
             binding.hourlyTV.setText(restaurant.getOpenHours());
+            binding.peopleCountTV.setVisibility(View.INVISIBLE);
+            binding.iconPerson.setVisibility(View.INVISIBLE);
+            if (restaurant.getNumberOfUsers().intValue() != 0) {
+                binding.peopleCountTV.setText("(" + restaurant.getNumberOfUsers().intValue() + ")");
+                binding.peopleCountTV.setVisibility(View.VISIBLE);
+                binding.iconPerson.setVisibility(View.VISIBLE);
+            }
 
             int stars = 0;
-            Log.d("adapterBind", "Restaurant ID: " + restaurant.getId() + ", Note in Adapter: " + restaurant.getNote().intValue());
             Integer note = restaurant.getNote().intValue();
 
             if (note >= 2) {
@@ -94,8 +102,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             if (note >= 8) {
                 stars = 3;
             }
-
-            Log.d("adapterBind", "Restaurant ID: " + restaurant.getId() + ", Calculated Stars: " + stars);
 
             binding.starContainer.removeAllViews();
             for (int i = 0; i < stars; i++) {

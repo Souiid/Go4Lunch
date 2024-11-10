@@ -109,7 +109,7 @@ public class RestaurantApiService {
                 website = Optional.ofNullable(restaurant.get("website").getAsString());
             }
 
-            Restaurant restaurantToSave = new Restaurant(placeId, name, address, lat, lng, "", photoUrl, openingHours, phoneNumber, website, Optional.of(0));
+            Restaurant restaurantToSave = new Restaurant(placeId, name, address, lat, lng, "", photoUrl, openingHours, phoneNumber, website, Optional.of(0), Optional.of(0));
             restaurants.add(restaurantToSave);
         }
         return restaurants;

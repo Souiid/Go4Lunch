@@ -18,13 +18,15 @@ public class Restaurant {
     Optional<String> phoneNumber;
     Optional<String> website;
     Optional<Integer> note;
+    Optional<Integer> numberOfUsers;
 
     public Restaurant(String id, String name, String address, double latitude, double longitude, String type,
                       String photoUrl,
                       String openHours,
                       Optional<String> phoneNumber,
                       Optional<String> website,
-                      Optional<Integer> note) {
+                      Optional<Integer> note,
+                      Optional<Integer> numberOfUsers) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -37,6 +39,8 @@ public class Restaurant {
         this.phoneNumber = phoneNumber;
         this.website = website;
         this.note = note;
+        this.numberOfUsers = numberOfUsers;
+
     }
 
     public String getId() {
@@ -85,6 +89,14 @@ public class Restaurant {
 
     public Number getNote() {
         return note.orElse(0);
+    }
+
+    public void setNumberOfUsers(Integer numberOfUsers) {
+        this.numberOfUsers = Optional.ofNullable(numberOfUsers);
+    }
+
+    public Number getNumberOfUsers() {
+        return numberOfUsers.orElse(0);
     }
 
     public void setOpenHours(String openHours) {

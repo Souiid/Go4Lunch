@@ -25,9 +25,11 @@ import com.idrisssouissi.go4lunch.databinding.FragmentListBinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class ListFragment extends Fragment implements RestaurantAdapter.OnRestaurantClickListener{
 
@@ -78,30 +80,26 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
             }
 
             if (restaurants != null) {
-
                 for (Restaurant restaurant : restaurants) {
                     Float distance = viewModel.getDistance(lastLocation, new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
                     restaurant.setDistance(distance);
                 }
-
                 List<User> users = viewModel.usersLiveData.getValue();
 
                 for (Restaurant restaurant : restaurants) {
                     assert users != null;
                     for (User user : users) {
-                        Log.d("aaa", "GetRestaurantLikeIDs: " + user.getRestaurantLikeIDs());
-                        if(user.getRestaurantLikeIDs().contains(restaurant.getId())) {
+                        if (user.getRestaurantLikeIDs().contains(restaurant.getId())) {
                             Integer restaurantNote = restaurant.getNote().intValue();
-                            Log.d("fff", "RESTAURANT NOTE" + restaurant.getId() +  "AVANT: " + restaurantNote);
                             restaurant.setNote(restaurantNote + 1);
-                            Log.d("fff", "RESTAURANT NOTE"  + restaurant.getId() + "APRES SET: "   + restaurant.getNote().intValue());                        }
+                        }
+                        if (user.getSelectedRestaurant().get("id").equals(restaurant.getId())) {
+                             Integer numberOfUsers = restaurant.getNumberOfUsers().intValue();
+                                restaurant.setNumberOfUsers(numberOfUsers + 1);
+                        }
                     }
+                    Log.d("ttt", "Nombre final d'utilisateurs pour le restaurant " + restaurant.getId() + ": " + restaurant.getNumberOfUsers());
                 }
-
-                for (Restaurant restaurant : restaurants) {
-                    Log.d("finalCheck", "Final Restaurant Note: " + restaurant.getId() + ": " + restaurant.getNote());
-                }
-
 
                 RestaurantAdapter adapter = new RestaurantAdapter(restaurants, this, viewModel);
                 binding.recyclerView.setAdapter(adapter);
@@ -109,7 +107,6 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                 adapter.updateRestaurants(restaurants);
                 binding.recyclerView.setVisibility(View.VISIBLE);
                 binding.progressBar.setVisibility(View.GONE);
-
             }
         });
 
