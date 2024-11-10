@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -17,6 +18,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.idrisssouissi.go4lunch.Go4Lunch;
@@ -73,6 +75,13 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         clickOnBackButton();
         clickOnLikeButton();
         clickOnParticipationButton();
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
+        UserAdapter adapter = new UserAdapter(viewModel.getUsersByRestaurantID(restaurantID));
+        binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
     private void clickOnBackButton() {

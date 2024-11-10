@@ -15,6 +15,7 @@ import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.UserItemBinding;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
@@ -52,7 +53,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         @SuppressLint("SetTextI18n")
         public void bind(UserItem user) {
-            binding.userInfoTV.setText(user.getName() + " a " + user.getRestaurantName());
+            if (!Objects.equals(user.getRestaurantName(), "")) {
+                binding.userInfoTV.setText(user.getName() + " a " + user.getRestaurantName());
+            }else {
+                binding.userInfoTV.setText(user.getName());
+            }
             Glide.with(binding.getRoot().getContext())
                     .load(user.getPhotoUrl())
                     .placeholder(R.drawable.pic)

@@ -9,9 +9,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
+import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -56,6 +59,17 @@ public class RestaurantDetailsViewModel extends ViewModel {
     public Boolean getIsRestaurantLiked(String restaurantId) {
         User currentUser = getCurrentUser();
         return (currentUser.getRestaurantLikeIDs().contains(restaurantId));
+    }
+
+    public List<UserItem> getUsersByRestaurantID(String restaurantId) {
+        ArrayList<UserItem> usersInRestaurant = new ArrayList<>();
+        for (User user : Objects.requireNonNull(userRepository.getUsersLiveData().getValue())) {
+            if (Objects.equals(user.getSelectedRestaurant().get("id"), restaurantId)) {
+                usersInRestaurant.add(new UserItem(user.getId(), user.getName(), "", user.getPhotoUrl()));
+            }
+
+        }
+        return usersInRestaurant;
     }
 
     public static class Factory implements ViewModelProvider.Factory {

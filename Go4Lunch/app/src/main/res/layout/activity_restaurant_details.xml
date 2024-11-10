@@ -149,6 +149,12 @@
         </LinearLayout>
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_below="@id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <ImageButton
         android:id="@+id/participationButton"
         android:layout_width="50dp"
@@ -162,14 +168,6 @@
         android:scaleType="center"
         android:src="@drawable/ic_check"
         app:tint="@color/gray" />
-
-    <LinearLayout
-        android:id="@+id/person_list_placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/action_bar"
-        android:background="@android:color/darker_gray"
-        android:orientation="horizontal" />
 
 
 </RelativeLayout>
