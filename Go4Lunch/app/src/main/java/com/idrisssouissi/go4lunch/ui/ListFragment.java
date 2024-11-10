@@ -67,8 +67,16 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                 this.lastLocation = lastLocation;
             }
         });
-
+        binding.recyclerView.setVisibility(View.INVISIBLE);
+        binding.noRestaurantFoundTV.setVisibility(View.INVISIBLE);
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
+
+            if (restaurants == null || restaurants.isEmpty()) {
+                binding.noRestaurantFoundTV.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.GONE);
+                return;
+            }
+
             if (restaurants != null) {
 
                 for (Restaurant restaurant : restaurants) {
@@ -99,6 +107,9 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                 binding.recyclerView.setAdapter(adapter);
                 binding.recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 adapter.updateRestaurants(restaurants);
+                binding.recyclerView.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.GONE);
+
             }
         });
 

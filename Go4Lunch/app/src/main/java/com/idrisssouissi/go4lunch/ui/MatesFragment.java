@@ -1,25 +1,20 @@
 package com.idrisssouissi.go4lunch.ui;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.FragmentMatesBinding;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,11 +66,17 @@ public class MatesFragment extends Fragment {
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        binding.recyclerView.setVisibility(View.INVISIBLE);
+        binding.noUsersFoundTV.setVisibility(View.INVISIBLE);
         viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair -> {
             Executors.newSingleThreadExecutor().execute(() -> {
                 List<Restaurant> restaurantList = pair.first;
                 List<User> userList = pair.second;
-
+                if (userList == null || userList.isEmpty()) {
+                    binding.noUsersFoundTV.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.GONE);
+                    return;
+                }
                 if (restaurantList != null && userList != null) {
                     Map<String, String> restaurantMap = new HashMap<>();
                     for (Restaurant restaurant : restaurantList) {
@@ -96,6 +97,8 @@ public class MatesFragment extends Fragment {
                     }
 
                     requireActivity().runOnUiThread(() -> {
+                        binding.recyclerView.setVisibility(View.VISIBLE);
+                        binding.progressBar.setVisibility(View.GONE);
                         userItemList.clear();
                         userItemList.addAll(newUserItemList);
                         adapter.notifyDataSetChanged();
