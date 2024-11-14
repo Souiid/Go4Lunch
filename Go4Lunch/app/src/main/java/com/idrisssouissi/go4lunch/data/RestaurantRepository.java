@@ -54,8 +54,8 @@ public class RestaurantRepository {
    //
    // }
 
-    public void getRestaurantContact(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber) {
-        restaurantApiService.getRestaurantDetailsFromId(restaurantId, website, phoneNumber);
+    public void getRestaurantContact(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber, Consumer<Optional<String>> name) {
+        restaurantApiService.getRestaurantDetailsFromId(restaurantId, website, phoneNumber, name);
     }
 
     public MutableLiveData<LatLng> getLastLocation() {

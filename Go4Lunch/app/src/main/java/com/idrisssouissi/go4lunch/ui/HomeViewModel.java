@@ -13,12 +13,17 @@ import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
+import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -161,6 +166,9 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
+    public void getDistantRestaurantName(String restaurantId, Consumer<Optional<String>> name) {
+        restaurantRepository.getRestaurantContact(restaurantId, null, null, name);
+    }
 
     // Tri par nom
     public void sortRestaurantsByName(Boolean isAscendant) {
@@ -195,6 +203,7 @@ public class HomeViewModel extends ViewModel {
             return String.format("%.1f km", distanceInKilometers);
         }
     }
+
 
     public static class Factory implements ViewModelProvider.Factory {
         private final RestaurantRepository restaurantRepository;

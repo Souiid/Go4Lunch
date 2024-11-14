@@ -85,15 +85,22 @@ public class MatesFragment extends Fragment {
 
                     List<UserItem> newUserItemList = new ArrayList<>();
                     for (User user : userList) {
-                        String restaurantName = "Pas encore sélectionné";
+                        String restaurantName = "Pas encore selectionné";
                         String selectedRestaurantID = user.getSelectedRestaurantID();
 
                         if (selectedRestaurantID != null && restaurantMap.containsKey(selectedRestaurantID)) {
                             restaurantName = restaurantMap.get(selectedRestaurantID);
+                            UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
+                            newUserItemList.add(userItem);
+                        } else if (selectedRestaurantID != null && !restaurantMap.containsKey(selectedRestaurantID) && selectedRestaurantID != "") {
+                            viewModel.getDistantRestaurantName(selectedRestaurantID, name -> {
+                                UserItem userItem = new UserItem(user.getId(), user.getName(), name.orElse("Non disponible"), user.getPhotoUrl());
+                                newUserItemList.add(userItem);
+                            });
+                        } else {
+                            UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
+                            newUserItemList.add(userItem);
                         }
-
-                        UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
-                        newUserItemList.add(userItem);
                     }
 
                     requireActivity().runOnUiThread(() -> {

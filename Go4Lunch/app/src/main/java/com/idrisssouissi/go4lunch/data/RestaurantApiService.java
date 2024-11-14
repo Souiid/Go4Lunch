@@ -115,10 +115,10 @@ public class RestaurantApiService {
         return restaurants;
     }
 
-    void getRestaurantDetailsFromId(String restaurantId, Consumer<Optional<String>> websiteCallback, Consumer<Optional<String>> phoneCallback) {
+    void getRestaurantDetailsFromId(String restaurantId, Consumer<Optional<String>> websiteCallback, Consumer<Optional<String>> phoneCallback,  Consumer<Optional<String>> nameCallback) {
         String url = "https://maps.googleapis.com/maps/api/place/details/json" +
                 "?place_id=" + restaurantId +
-                "&fields=name,website,formatted_phone_number" +
+                "&fields=name,website,formatted_phone_number,opening_hours" +
                 "&key=" + API_KEY;
 
         Request request = new Request.Builder()
@@ -135,20 +135,33 @@ public class RestaurantApiService {
 
                     // Récupère l'objet "result"
                     JsonObject resultObject = jsonObject.getAsJsonObject("result");
-
+                    Log.d("ddd", "resultObject in API: " + resultObject);
                     // Récupère le site web du restaurant, si disponible
+
+                    if (resultObject.has("name")) {
+                        String name = resultObject.get("name").getAsString();
+                        if (nameCallback != null) {
+                            nameCallback.accept(Optional.ofNullable(name));
+                        }
+                    } else if (nameCallback != null) {
+                        nameCallback.accept(Optional.empty());
+                    }
+
                     if (resultObject.has("website")) {
-                        String website = resultObject.get("website").getAsString();
-                        websiteCallback.accept(Optional.ofNullable(website));
-                    } else {
+                        String name = resultObject.get("website").getAsString();
+                        if (websiteCallback != null) {
+                            websiteCallback.accept(Optional.ofNullable(name));
+                        }
+                    } else if (websiteCallback != null) {
                         websiteCallback.accept(Optional.empty());
                     }
 
-                    // Récupère le numéro de téléphone, si disponible
                     if (resultObject.has("formatted_phone_number")) {
                         String phoneNumber = resultObject.get("formatted_phone_number").getAsString();
-                        phoneCallback.accept(Optional.ofNullable(phoneNumber));
-                    } else {
+                        if (phoneCallback != null) {
+                            phoneCallback.accept(Optional.ofNullable(phoneNumber));
+                        }
+                    } else if (phoneCallback != null) {
                         phoneCallback.accept(Optional.empty());
                     }
 

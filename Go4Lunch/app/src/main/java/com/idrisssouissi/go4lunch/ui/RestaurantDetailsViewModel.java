@@ -47,7 +47,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
     public void getWebsiteAndPhoneNumber(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber) {
-        restaurantRepository.getRestaurantContact(restaurantId, website, phoneNumber);
+        restaurantRepository.getRestaurantContact(restaurantId, website, phoneNumber, null);
 
     }
 
