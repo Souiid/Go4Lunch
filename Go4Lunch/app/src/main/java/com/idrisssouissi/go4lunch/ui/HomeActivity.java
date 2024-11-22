@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -139,20 +140,43 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        // Charger le menu dans la toolbar
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
 
-        // Vérifiez le fragment actif et définissez la visibilité de l'élément de tri
+        // Gérer la visibilité de l'élément de tri en fonction du fragment actif
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         MenuItem sortItem = menu.findItem(R.id.action_sort);
-
         if (currentFragment instanceof ListFragment) {
             sortItem.setVisible(true);
         } else {
             sortItem.setVisible(false);
         }
 
+        // Gérer la SearchView
+        MenuItem searchItem = menu.findItem(R.id.search_item);
+        androidx.appcompat.widget.SearchView searchView =
+                (androidx.appcompat.widget.SearchView) searchItem.getActionView();
+
+        searchView.setQueryHint("Search...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Action lors de la soumission de la recherche
+                viewModel.filterRestaurantsByQuery(query);
+                Toast.makeText(HomeActivity.this, "Searching for: " + query, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -160,6 +184,8 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
             case R.id.action_sort:
                 showPopupMenu(findViewById(R.id.action_sort));
                 return true;
+            case R.id.search_item:
+
             default:
                 return super.onOptionsItemSelected(item);
         }

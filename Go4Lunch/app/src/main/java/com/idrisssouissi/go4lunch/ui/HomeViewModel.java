@@ -16,6 +16,7 @@ import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +27,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+
+import kotlin.Triple;
 
 public class HomeViewModel extends ViewModel {
 
@@ -38,7 +41,6 @@ public class HomeViewModel extends ViewModel {
     MediatorLiveData<Pair<List<Restaurant>, List<User>>> uiStateLiveData = new MediatorLiveData<>();
     LiveData<List<Restaurant>> restaurantsLiveData;
     LiveData<List<User>> usersLiveData;
-
     @Inject
     public HomeViewModel(RestaurantRepository restaurantRepository, UserRepository userRepository, FirebaseApiService firebaseApiService) {
         this.restaurantRepository = restaurantRepository;
@@ -62,7 +64,7 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    public LiveData<List<Restaurant>> getRestaurantsByFetch(Double latitude, Double longitude) {
+    public LiveData<List<Restaurant>> getRestaurantsByFetch(Double latitude, Double longitude) throws IOException {
         Log.d("aaa", "Fetching restaurants for lat: " + latitude + ", lon: " + longitude);
         restaurantRepository.updatePosition(latitude, longitude);
         return restaurantRepository.getRestaurantsLiveData();
@@ -166,8 +168,8 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
-    public void getDistantRestaurantName(String restaurantId, Consumer<Optional<String>> name) {
-        restaurantRepository.getRestaurantContact(restaurantId, null, null, name);
+    public Triple<String, String, String> getDistantRestaurantName(String restaurantId) throws IOException {
+        return restaurantRepository.getRestaurantContact(restaurantId);
     }
 
     // Tri par nom
@@ -188,6 +190,22 @@ public class HomeViewModel extends ViewModel {
             ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(currentRestaurants);
         }
     }
+
+
+    public void filterRestaurantsByQuery(String query) {
+        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
+        if (currentRestaurants != null) {
+            List<Restaurant> filteredRestaurants = new ArrayList<>();
+            for (Restaurant restaurant : currentRestaurants) {
+                if (restaurant.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredRestaurants.add(restaurant);
+                }
+            }
+            // Met à jour la liste filtrée dans LiveData
+            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(filteredRestaurants);
+        }
+    }
+
 
     public Float getDistance(LatLng lastLocation, LatLng restaurantLocation) {
         float[] results = new float[1];

@@ -27,7 +27,10 @@ import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.databinding.ActivityRestaurantDetailsBinding;
 
+import java.io.IOException;
 import java.util.Optional;
+
+import kotlin.Triple;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
@@ -57,7 +60,16 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         restaurantID = getIntent().getStringExtra("restaurantID");
         restaurant = viewModel.getRestaurant(restaurantID);
 
-        viewModel.getWebsiteAndPhoneNumber(restaurantID, this::clickOnWebsiteButton, this::clickOnPhoneButton);
+        new Thread(() -> {
+            try {
+                Triple<String, String, String> details = viewModel.getWebsiteAndPhoneNumber(restaurantID);
+                clickOnPhoneButton(Optional.ofNullable(details.component2()));
+                clickOnWebsiteButton(Optional.ofNullable(details.component3()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+
 
         binding.restaurantName.setText(restaurant.getName());
         binding.restaurantAddress.setText(restaurant.getAddress());

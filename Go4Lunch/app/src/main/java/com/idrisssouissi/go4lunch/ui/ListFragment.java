@@ -81,6 +81,9 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
 
             if (restaurants != null) {
                 for (Restaurant restaurant : restaurants) {
+                    restaurant.setNote(0);
+                    restaurant.setNumberOfUsers(0);
+
                     Float distance = viewModel.getDistance(lastLocation, new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
                     restaurant.setDistance(distance);
                 }

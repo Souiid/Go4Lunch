@@ -99,6 +99,10 @@ dependencies {
     implementation(libs.github.glide)
     annotationProcessor(libs.glide.compiler)
 
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation (libs.converter.gson)
+
     implementation(libs.fragment.ktx)
 }
 

@@ -15,11 +15,15 @@ import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.FragmentMatesBinding;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+
+import kotlin.Triple;
 
 
 public class MatesFragment extends Fragment {
@@ -93,10 +97,14 @@ public class MatesFragment extends Fragment {
                             UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
                             newUserItemList.add(userItem);
                         } else if (selectedRestaurantID != null && !restaurantMap.containsKey(selectedRestaurantID) && selectedRestaurantID != "") {
-                            viewModel.getDistantRestaurantName(selectedRestaurantID, name -> {
-                                UserItem userItem = new UserItem(user.getId(), user.getName(), name.orElse("Non disponible"), user.getPhotoUrl());
+                            try {
+                                Triple<String, String, String> details = viewModel.getDistantRestaurantName(selectedRestaurantID);
+                                restaurantName = details.component1();
+                                UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
                                 newUserItemList.add(userItem);
-                            });
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         } else {
                             UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
                             newUserItemList.add(userItem);

@@ -6,11 +6,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+
+import kotlin.Triple;
 
 public class RestaurantRepository {
 
@@ -23,11 +26,10 @@ public class RestaurantRepository {
         this.restaurantApiService = restaurantApiService;
     }
 
-    public void updatePosition(Double latitude, Double longitude) {
-        restaurantApiService.fetchNearbyRestaurants(latitude, longitude, restaurants -> {
-            Log.d("aaa", "Fetched Restaurants in repo" + restaurants.size() + " restaurants");
-            restaurantsLiveData.postValue(restaurants);
-        });
+    public void updatePosition(Double latitude, Double longitude) throws IOException {
+        List<Restaurant> restaurants = restaurantApiService.fetchNearbyRestaurants(latitude, longitude);
+        restaurantsLiveData.postValue(restaurants);
+
     }
 
     public void setLastLocation(LatLng location) {
@@ -49,13 +51,9 @@ public class RestaurantRepository {
         }
         return null;
     }
-             //TODO: Récupérer nom restau qui n'est pas dans la zone
-   // public getRestaurantNameFromID(String restaurantId, Consumer<String> callback) {
-   //
-   // }
 
-    public void getRestaurantContact(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber, Consumer<Optional<String>> name) {
-        restaurantApiService.getRestaurantDetailsFromId(restaurantId, website, phoneNumber, name);
+    public Triple<String, String, String> getRestaurantContact(String restaurantId) throws IOException {
+        return restaurantApiService.getRestaurantDetailsFromId(restaurantId);
     }
 
     public MutableLiveData<LatLng> getLastLocation() {

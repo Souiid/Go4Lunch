@@ -10,12 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,12 +34,14 @@ import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.FragmentMapBinding;
+
+import java.io.IOException;
 import java.util.List;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private  GoogleMap mMap;
+    private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private FragmentMapBinding binding;
     private static final String API_KEY = "AIzaSyBig97MXmqFVmydv38OkE8d0SXxeCaTbtU";
@@ -49,6 +53,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static MapFragment newInstance() {
         return new MapFragment();
     }
+
     private OnRestaurantSelectedListener callback;
 
     @Override
@@ -88,7 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         clickOnSearchButton();
 
 
-        viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair ->{
+        viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair -> {
             List<User> users = pair.second;
             List<Restaurant> restaurants = pair.first;
             Log.d("aaa", "RESTAURANTS COUNT:" + restaurants.size());
@@ -157,8 +162,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                            fetchNearbyRestaurants(latitude, longitude);
-                            viewModel.setLastLocation(latitude, longitude);
+
+                            new Thread(() -> {
+                                try {
+                                    fetchNearbyRestaurants(latitude, longitude);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                viewModel.setLastLocation(latitude, longitude);
+                            }).start();
+
                         }
                     }
                 });
@@ -181,17 +194,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     LatLng centerOfMap = mMap.getCameraPosition().target;
                     double centerLatitude = centerOfMap.latitude;
                     double centerLongitude = centerOfMap.longitude;
-                    fetchNearbyRestaurants(centerLatitude, centerLongitude);
-                    v.setVisibility(View.INVISIBLE);
+                    new Thread(() -> {
+                        try {
+
+                            fetchNearbyRestaurants(centerLatitude, centerLongitude);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        v.setVisibility(View.INVISIBLE);
+                    }).start();
                 }
             }
         });
     }
 
-    private void fetchNearbyRestaurants(double latitude, double longitude) {
+    private void fetchNearbyRestaurants(double latitude, double longitude) throws IOException {
         restaurantsLiveData = viewModel.getRestaurantsByFetch(latitude, longitude);
     }
-
 
 
 }

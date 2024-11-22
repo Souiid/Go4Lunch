@@ -12,6 +12,7 @@ import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+
+import kotlin.Triple;
 
 public class RestaurantDetailsViewModel extends ViewModel {
 
@@ -46,9 +49,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
         return null;
     }
 
-    public void getWebsiteAndPhoneNumber(String restaurantId, Consumer<Optional<String>> website, Consumer<Optional<String>> phoneNumber) {
-        restaurantRepository.getRestaurantContact(restaurantId, website, phoneNumber, null);
-
+    public Triple<String, String, String> getWebsiteAndPhoneNumber(String restaurantId) throws IOException {
+       return restaurantRepository.getRestaurantContact(restaurantId);
     }
 
     public Boolean getIsRestaurantSelected(String restaurantId) {
