@@ -21,6 +21,12 @@ public class RepositoryModule {
 
     @Provides
     @Singleton
+    LocationRepository provideLocationRepository() {
+        return new LocationRepository();
+    }
+
+    @Provides
+    @Singleton
     FirebaseApiService provideFirebaseApiService() {
         return new FirebaseApiService();
     }

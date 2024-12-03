@@ -32,6 +32,7 @@ public class RestaurantApiService {
         }
     }
 
+
     private List<Restaurant> mapResultsToRestaurants(List<NearbySearchResponse.RestaurantResult> results) {
         List<Restaurant> restaurants = new ArrayList<>();
         for (NearbySearchResponse.RestaurantResult result : results) {
@@ -42,6 +43,11 @@ public class RestaurantApiService {
                 photoUrl = getPhotoUrl(result.photos.get(0).photoReference);
             }
 
+            String openHours = "Unknown";
+            if (result.openingHours != null && result.openingHours.openNow != null) {
+                openHours = result.openingHours.openNow ? "Open now" : "Closed now";
+            }
+
             Restaurant restaurant = new Restaurant(
                     result.placeId,
                     result.name,
@@ -50,7 +56,7 @@ public class RestaurantApiService {
                     result.geometry.location.lng,
                     null, // Type (non présent dans l'API)
                     photoUrl, // URL de la photo
-                    "Unknown", // Horaires d'ouverture (peut être ajusté)
+                    openHours, // Horaires d'ouverture (peut être ajusté)
                     Optional.empty(), // Téléphone
                     Optional.empty(), // Site Web
                     Optional.empty(), // Note
@@ -60,6 +66,7 @@ public class RestaurantApiService {
         }
         return restaurants;
     }
+
 
 
     public Triple<String, String, String> getRestaurantDetailsFromId(String restaurantId) throws IOException {

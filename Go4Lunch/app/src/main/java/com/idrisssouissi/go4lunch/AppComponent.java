@@ -1,5 +1,6 @@
 package com.idrisssouissi.go4lunch;
 
+import com.idrisssouissi.go4lunch.data.LocationRepository;
 import com.idrisssouissi.go4lunch.data.RepositoryModule;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.UserRepository;
@@ -24,6 +25,7 @@ public interface AppComponent {
     // Méthode pour obtenir une instance du repository si besoin
     RestaurantRepository getRestaurantRepository();
     UserRepository getUserRepository();
+    LocationRepository getLocationRepository();
     HomeViewModel.Factory provideHometViewModelFactory();
     RestaurantDetailsViewModel.Factory provideRestaurantDetailsViewModelFactory();
 

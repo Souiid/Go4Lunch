@@ -9,22 +9,25 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
+import com.idrisssouissi.go4lunch.data.LocationRepository;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
-import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -36,18 +39,20 @@ public class HomeViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final FirebaseApiService firebaseApiService;
     private final MutableLiveData<Boolean> isUserConnected = new MutableLiveData<>();
+    private final LocationRepository locationRepository;
 
 
     MediatorLiveData<Pair<List<Restaurant>, List<User>>> uiStateLiveData = new MediatorLiveData<>();
-    LiveData<List<Restaurant>> restaurantsLiveData;
+    private final MutableLiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
     LiveData<List<User>> usersLiveData;
     @Inject
-    public HomeViewModel(RestaurantRepository restaurantRepository, UserRepository userRepository, FirebaseApiService firebaseApiService) {
+    public HomeViewModel(RestaurantRepository restaurantRepository, UserRepository userRepository, LocationRepository locationRepository, FirebaseApiService firebaseApiService) {
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
+        this.locationRepository = locationRepository;
 
         // Initialiser les LiveData
-        this.restaurantsLiveData = restaurantRepository.getRestaurantsLiveData();
+        this.restaurantsLiveData.setValue(restaurantRepository.getRestaurants());
         this.usersLiveData = userRepository.getUsersLiveData();
         this.firebaseApiService = firebaseApiService;
 
@@ -66,8 +71,9 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<List<Restaurant>> getRestaurantsByFetch(Double latitude, Double longitude) throws IOException {
         Log.d("aaa", "Fetching restaurants for lat: " + latitude + ", lon: " + longitude);
-        restaurantRepository.updatePosition(latitude, longitude);
-        return restaurantRepository.getRestaurantsLiveData();
+        List<Restaurant> restaurants = restaurantRepository.getRestaurantsByLocation(latitude, longitude);
+        restaurantsLiveData.postValue(restaurants);
+        return restaurantsLiveData;
     }
 
     public void onNewData(List<Restaurant> restaurants, List<User> users) {
@@ -86,14 +92,13 @@ public class HomeViewModel extends ViewModel {
         isUserConnected.setValue(firebaseApiService.isUserConnected());
     }
 
-
     public void signOut() {
         firebaseApiService.signOut();
         isUserConnected.setValue(false);
     }
 
     public LiveData<List<Restaurant>> getRestaurants() {
-        return restaurantRepository.getRestaurantsLiveData();
+        return restaurantsLiveData;
     }
 
     public List<String> getAllSelectedRestaurantID(List<User> users, List<Restaurant> restaurants) {
@@ -114,7 +119,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public MutableLiveData<LatLng> getLastLocation() {
-        return restaurantRepository.getLastLocation();
+        return locationRepository.getLastLocation();
     }
 
     public void refreshUsers() {
@@ -122,7 +127,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void setLastLocation(Double latitude, Double longitude) {
-        restaurantRepository.setLastLocation(new LatLng(latitude, longitude));
+        locationRepository.setLastLocation(new LatLng(latitude, longitude));
     }
 
     // Tri par note (rating)
@@ -142,7 +147,7 @@ public class HomeViewModel extends ViewModel {
                 }
             });
             // Met à jour les restaurants triés dans LiveData
-            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(currentRestaurants);
+            restaurantsLiveData.setValue(currentRestaurants);
         }
     }
 
@@ -192,8 +197,8 @@ public class HomeViewModel extends ViewModel {
     }
 
 
-    public void filterRestaurantsByQuery(String query) {
-        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
+    public void filterRestaurantsByName(String query) {
+        List<Restaurant> currentRestaurants = restaurantRepository.getRestaurants();
         if (currentRestaurants != null) {
             List<Restaurant> filteredRestaurants = new ArrayList<>();
             for (Restaurant restaurant : currentRestaurants) {
@@ -201,9 +206,32 @@ public class HomeViewModel extends ViewModel {
                     filteredRestaurants.add(restaurant);
                 }
             }
-            // Met à jour la liste filtrée dans LiveData
-            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(filteredRestaurants);
+            Log.d("Search", "Filtered restaurants count: " + filteredRestaurants.size());
+            restaurantsLiveData.setValue(filteredRestaurants);
         }
+    }
+
+
+    public void filterUsersByQuery(String query) {
+        List<User> currentUsers = usersLiveData.getValue();
+        if (currentUsers != null) {
+            List<User> filteredUsers = new ArrayList<>();
+            for (User user : currentUsers) {
+                if (user.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredUsers.add(user);
+                }
+            }
+            // Met à jour la liste filtrée dans LiveData
+            ((MutableLiveData<List<User>>) usersLiveData).setValue(filteredUsers);
+        }
+    }
+
+    public void initRestaurants() {
+        restaurantsLiveData.postValue(restaurantRepository.getRestaurants());
+    }
+
+    public void initUsers() {
+        usersLiveData = userRepository.getUsersLiveData();
     }
 
 
@@ -222,26 +250,62 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
+    public String getIsRestaurantSelected() {
+        User currentUser = getCurrentUser();
+        Log.d("aaa", "GET CURRENT USER Restaurant: " + currentUser.getSelectedRestaurant());
+        Log.d("aaa", "GET CURRENT USER Restaurant ID: " + currentUser.getSelectedRestaurant().get("id"));
+        Log.d("aaa", "GET CURRENT USER Restaurant date: " + currentUser.getSelectedRestaurant().get("date"));
+
+        String restaurantID = (String) currentUser.getSelectedRestaurant().get("id");
+        Timestamp restaurantDate = (Timestamp) currentUser.getSelectedRestaurant().get("date");
+
+        Date date = restaurantDate.toDate();
+        LocalDateTime selectedDateTime = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        LocalDate selectedDate = selectedDateTime.toLocalDate();
+        LocalDateTime limitDateTime = LocalDateTime.of(selectedDate, LocalTime.of(14, 0));
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isAfter(limitDateTime) || Objects.equals(restaurantID, "")) {
+            Log.d("aaa", "Date dépassée");
+            return "";
+        }
+        return restaurantID;
+    }
+
+    public User getCurrentUser() {
+        List<User> userList = userRepository.getUsersLiveData().getValue();
+        String currentUserID = userRepository.getCurrentUID();
+        for (User user : userList) {
+            if (user.getId().equals(currentUserID)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
 
     public static class Factory implements ViewModelProvider.Factory {
         private final RestaurantRepository restaurantRepository;
         private final UserRepository userRepository;
+        private final LocationRepository locationRepository;
         private final FirebaseApiService firebaseApiService;
 
         @Inject
-        public Factory(RestaurantRepository restaurantRepository, UserRepository userRepository, FirebaseApiService firebaseApiService) {
+        public Factory(RestaurantRepository restaurantRepository, UserRepository userRepository, LocationRepository locationRepository, FirebaseApiService firebaseApiService) {
             this.restaurantRepository = restaurantRepository;
             this.userRepository = userRepository;
+            this.locationRepository = locationRepository;
             this.firebaseApiService = firebaseApiService;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(HomeViewModel.class)) {
-                return (T) new HomeViewModel(restaurantRepository, userRepository, firebaseApiService);
+                return (T) new HomeViewModel(restaurantRepository, userRepository, locationRepository, firebaseApiService);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }
 }
-

@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,7 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class ListFragment extends Fragment implements RestaurantAdapter.OnRestaurantClickListener{
+public class ListFragment extends Fragment implements RestaurantAdapter.OnRestaurantClickListener, SearchView.OnQueryTextListener{
 
     HomeViewModel viewModel;
 
@@ -64,53 +65,56 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         viewModel.getLastLocation().observe(getViewLifecycleOwner(), lastLocation -> {
             if (lastLocation != null) {
                 this.lastLocation = lastLocation;
             }
         });
+        
         binding.recyclerView.setVisibility(View.INVISIBLE);
         binding.noRestaurantFoundTV.setVisibility(View.INVISIBLE);
+
+        RestaurantAdapter adapter = new RestaurantAdapter(new ArrayList<>(), this, viewModel);
+        binding.recyclerView.setAdapter(adapter);
+
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
+            Log.d("ListFragment", "Restaurants updated: " + (restaurants != null ? restaurants.size() : 0));
 
             if (restaurants == null || restaurants.isEmpty()) {
                 binding.noRestaurantFoundTV.setVisibility(View.VISIBLE);
                 binding.progressBar.setVisibility(View.GONE);
                 return;
             }
+            for (Restaurant restaurant : restaurants) {
+                restaurant.setNote(0);
+                restaurant.setNumberOfUsers(0);
 
-            if (restaurants != null) {
-                for (Restaurant restaurant : restaurants) {
-                    restaurant.setNote(0);
-                    restaurant.setNumberOfUsers(0);
-
-                    Float distance = viewModel.getDistance(lastLocation, new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
-                    restaurant.setDistance(distance);
-                }
-                List<User> users = viewModel.usersLiveData.getValue();
-
-                for (Restaurant restaurant : restaurants) {
-                    assert users != null;
-                    for (User user : users) {
-                        if (user.getRestaurantLikeIDs().contains(restaurant.getId())) {
-                            Integer restaurantNote = restaurant.getNote().intValue();
-                            restaurant.setNote(restaurantNote + 1);
-                        }
-                        if (user.getSelectedRestaurant().get("id").equals(restaurant.getId())) {
-                             Integer numberOfUsers = restaurant.getNumberOfUsers().intValue();
-                                restaurant.setNumberOfUsers(numberOfUsers + 1);
-                        }
-                    }
-                    Log.d("ttt", "Nombre final d'utilisateurs pour le restaurant " + restaurant.getId() + ": " + restaurant.getNumberOfUsers());
-                }
-
-                RestaurantAdapter adapter = new RestaurantAdapter(restaurants, this, viewModel);
-                binding.recyclerView.setAdapter(adapter);
-                binding.recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-                adapter.updateRestaurants(restaurants);
-                binding.recyclerView.setVisibility(View.VISIBLE);
-                binding.progressBar.setVisibility(View.GONE);
+                Float distance = viewModel.getDistance(lastLocation, new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
+                restaurant.setDistance(distance);
             }
+            List<User> users = viewModel.usersLiveData.getValue();
+
+            for (Restaurant restaurant : restaurants) {
+                assert users != null;
+                for (User user : users) {
+                    if (user.getRestaurantLikeIDs().contains(restaurant.getId())) {
+                        Integer restaurantNote = restaurant.getNote().intValue();
+                        restaurant.setNote(restaurantNote + 1);
+                    }
+                    if (user.getSelectedRestaurant().get("id").equals(restaurant.getId())) {
+                        Integer numberOfUsers = restaurant.getNumberOfUsers().intValue();
+                        restaurant.setNumberOfUsers(numberOfUsers + 1);
+                    }
+                }
+                Log.d("ttt", "Nombre final d'utilisateurs pour le restaurant " + restaurant.getId() + ": " + restaurant.getNumberOfUsers());
+            }
+
+
+            binding.recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+            adapter.updateRestaurants(restaurants);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
         });
 
     }
@@ -121,5 +125,16 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
         Intent intent = new Intent(getActivity(), RestaurantDetailsActivity.class);
         intent.putExtra("restaurantID", restaurantID);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        viewModel.filterRestaurantsByName(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }

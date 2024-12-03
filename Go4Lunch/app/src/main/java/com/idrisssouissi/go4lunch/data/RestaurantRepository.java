@@ -2,11 +2,13 @@ package com.idrisssouissi.go4lunch.data;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -17,31 +19,27 @@ import kotlin.Triple;
 
 public class RestaurantRepository {
 
-    private MutableLiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
+    private List<Restaurant> restaurants = new ArrayList<>();
     private RestaurantApiService restaurantApiService;
-    private MutableLiveData<LatLng> lastLocation = new MutableLiveData<>();
+
 
     @Inject
     public RestaurantRepository(RestaurantApiService restaurantApiService) {
         this.restaurantApiService = restaurantApiService;
     }
 
-    public void updatePosition(Double latitude, Double longitude) throws IOException {
-        List<Restaurant> restaurants = restaurantApiService.fetchNearbyRestaurants(latitude, longitude);
-        restaurantsLiveData.postValue(restaurants);
+    public List<Restaurant> getRestaurantsByLocation(Double latitude, Double longitude) throws IOException {
 
+        restaurants = restaurantApiService.fetchNearbyRestaurants(latitude, longitude);
+        return restaurants;
     }
 
-    public void setLastLocation(LatLng location) {
-        lastLocation.postValue(location);
+    public List<Restaurant> getRestaurants() {
+        return restaurants;
     }
 
-    public MutableLiveData<List<Restaurant>> getRestaurantsLiveData() {
-        return restaurantsLiveData;
-    }
 
     public Restaurant getRestaurantById(String restaurantId) {
-        List<Restaurant> restaurants = restaurantsLiveData.getValue();
         if (restaurants != null) {
             for (Restaurant restaurant : restaurants) {
                 if (restaurant.getId().equals(restaurantId)) {
@@ -56,7 +54,4 @@ public class RestaurantRepository {
         return restaurantApiService.getRestaurantDetailsFromId(restaurantId);
     }
 
-    public MutableLiveData<LatLng> getLastLocation() {
-        return lastLocation;
-    }
 }
