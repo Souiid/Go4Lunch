@@ -27,11 +27,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
-import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
 
-
-import javax.inject.Inject;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -135,41 +132,64 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
             binding.bottomNavigation.setSelectedItemId(R.id.navigation_map);
         }
 
+
         getSupportFragmentManager().addOnBackStackChangedListener(() -> invalidateOptionsMenu());
     }
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        // Charger le menu dans la toolbar
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
 
-        // Gérer la visibilité de l'élément de tri en fonction du fragment actif
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        // Handle the visibility of the sort item
         MenuItem sortItem = menu.findItem(R.id.action_sort);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof ListFragment) {
             sortItem.setVisible(true);
         } else {
             sortItem.setVisible(false);
         }
 
-        // Gérer la SearchView
+        // Setup the SearchView
         MenuItem searchItem = menu.findItem(R.id.search_item);
-        androidx.appcompat.widget.SearchView searchView =
-                (androidx.appcompat.widget.SearchView) searchItem.getActionView();
+        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
 
         searchView.setQueryHint("Search...");
+        searchView.setIconifiedByDefault(true);
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Optional: Handle the expand action
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                viewModel.initRestaurants();
+                Toast.makeText(HomeActivity.this, "Search view closed", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Action lors de la soumission de la recherche
-                viewModel.filterRestaurantsByQuery(query);
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (currentFragment instanceof ListFragment) {
+                    viewModel.filterRestaurantsByName(query);
+                } else if (currentFragment instanceof MapFragment) {
+                    viewModel.filterUsersByQuery(query);
+                }
                 Toast.makeText(HomeActivity.this, "Searching for: " + query, Toast.LENGTH_SHORT).show();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    viewModel.initRestaurants();
+                    Toast.makeText(HomeActivity.this, "Search text cleared", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });

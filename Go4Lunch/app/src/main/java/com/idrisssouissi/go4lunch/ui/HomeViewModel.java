@@ -13,18 +13,13 @@ import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
-import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -85,7 +80,6 @@ public class HomeViewModel extends ViewModel {
     public void checkUserConnection() {
         isUserConnected.setValue(firebaseApiService.isUserConnected());
     }
-
 
     public void signOut() {
         firebaseApiService.signOut();
@@ -192,7 +186,7 @@ public class HomeViewModel extends ViewModel {
     }
 
 
-    public void filterRestaurantsByQuery(String query) {
+    public void filterRestaurantsByName(String query) {
         List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
         if (currentRestaurants != null) {
             List<Restaurant> filteredRestaurants = new ArrayList<>();
@@ -204,6 +198,32 @@ public class HomeViewModel extends ViewModel {
             // Met à jour la liste filtrée dans LiveData
             ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(filteredRestaurants);
         }
+    }
+
+
+    public void filterUsersByQuery(String query) {
+        List<User> currentUsers = usersLiveData.getValue();
+        if (currentUsers != null) {
+            List<User> filteredUsers = new ArrayList<>();
+            for (User user : currentUsers) {
+                if (user.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredUsers.add(user);
+                }
+            }
+            // Met à jour la liste filtrée dans LiveData
+            ((MutableLiveData<List<User>>) usersLiveData).setValue(filteredUsers);
+        }
+    }
+
+    public void initRestaurants() {
+        List<Restaurant> currentRestaurants = restaurantRepository.getRestaurantsLiveData().getValue();
+        if (currentRestaurants != null) {
+            ((MutableLiveData<List<Restaurant>>) restaurantsLiveData).setValue(currentRestaurants);
+        }
+    }
+
+    public void initUsers() {
+        usersLiveData = userRepository.getUsersLiveData();
     }
 
 
@@ -220,6 +240,23 @@ public class HomeViewModel extends ViewModel {
             Float distanceInKilometers = distance / 1000;
             return String.format("%.1f km", distanceInKilometers);
         }
+    }
+
+    public Boolean getIsRestaurantSelected() {
+        User currentUser = getCurrentUser();
+        Log.d("aaa", "GET CURRENT USER: " + currentUser.getSelectedRestaurant());
+        return true;
+    }
+
+    public User getCurrentUser() {
+        List<User> userList = userRepository.getUsersLiveData().getValue();
+        String currentUserID = userRepository.getCurrentUID();
+        for (User user : userList) {
+            if (user.getId().equals(currentUserID)) {
+                return user;
+            }
+        }
+        return null;
     }
 
 
