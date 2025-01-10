@@ -3,11 +3,13 @@ package com.idrisssouissi.go4lunch.ui;
 import android.location.Location;
 import android.util.Log;
 import android.util.Pair;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
@@ -18,16 +20,20 @@ import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
 
@@ -45,6 +51,7 @@ public class HomeViewModel extends ViewModel {
     MediatorLiveData<Pair<List<Restaurant>, List<User>>> uiStateLiveData = new MediatorLiveData<>();
     private final MutableLiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
     LiveData<List<User>> usersLiveData;
+
     @Inject
     public HomeViewModel(RestaurantRepository restaurantRepository, UserRepository userRepository, LocationRepository locationRepository, FirebaseApiService firebaseApiService) {
         this.restaurantRepository = restaurantRepository;
@@ -105,16 +112,50 @@ public class HomeViewModel extends ViewModel {
         List<String> selectedRestaurantIDs = new ArrayList<>();
 
         for (User user : users) {
+
             String selectedRestaurantId = (String) user.getSelectedRestaurant().get("id");
-            if (selectedRestaurantId != null) {
-                for (Restaurant restaurant : restaurants) {
-                    if (selectedRestaurantId.equals(restaurant.getId())) {
-                        selectedRestaurantIDs.add(restaurant.getId());
-                        break;
+            Timestamp restaurantDate = (Timestamp) user.getSelectedRestaurant().get("date");
+            Timestamp nowInstant = Timestamp.now();
+
+            if (selectedRestaurantId != null && restaurantDate != null) {
+                // Récupérer la date actuelle sans l'heure
+                Calendar nowCalendar = Calendar.getInstance();
+                nowCalendar.setTime(nowInstant.toDate());
+                nowCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                nowCalendar.set(Calendar.MINUTE, 0);
+                nowCalendar.set(Calendar.SECOND, 0);
+                nowCalendar.set(Calendar.MILLISECOND, 0);
+                Date todayDate = nowCalendar.getTime(); // Aujourd’hui à 00:00:00
+
+                // Récupérer la date du restaurant sans l'heure
+                Calendar restaurantCalendar = Calendar.getInstance();
+                restaurantCalendar.setTime(restaurantDate.toDate());
+                restaurantCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                restaurantCalendar.set(Calendar.MINUTE, 0);
+                restaurantCalendar.set(Calendar.SECOND, 0);
+                restaurantCalendar.set(Calendar.MILLISECOND, 0);
+                Date restaurantDay = restaurantCalendar.getTime(); // Jour du restaurant à 00:00:00
+
+                // Vérifier si la date du restaurant est aujourd’hui
+                if (restaurantDay.equals(todayDate)) {
+                    // Ajouter la limite de 15h
+                    restaurantCalendar.set(Calendar.HOUR_OF_DAY, 15);
+                    restaurantCalendar.set(Calendar.MINUTE, 0);
+                    restaurantCalendar.set(Calendar.SECOND, 0);
+                    Timestamp fifteenOClockRestaurantDay = new Timestamp(restaurantCalendar.getTime());
+
+                    for (Restaurant restaurant : restaurants) {
+                        if (selectedRestaurantId.equals(restaurant.getId())
+                                && restaurantDate.compareTo(fifteenOClockRestaurantDay) <= 0) { // Vérifie qu'on est avant 15h
+
+                            selectedRestaurantIDs.add(restaurant.getId());
+                            break;
+                        }
                     }
                 }
             }
         }
+
         return selectedRestaurantIDs;
     }
 
@@ -140,7 +181,7 @@ public class HomeViewModel extends ViewModel {
                     if (isAscendant) {
                         return Float.compare(r2.getNote().floatValue(), r1.getNote().floatValue());
 
-                    }else {
+                    } else {
                         return Float.compare(r1.getNote().floatValue(), r2.getNote().floatValue());
 
                     }
@@ -186,7 +227,7 @@ public class HomeViewModel extends ViewModel {
                 public int compare(Restaurant r1, Restaurant r2) {
                     if (isAscendant) {
                         return r1.getName().compareToIgnoreCase(r2.getName());
-                    }else {
+                    } else {
                         return r2.getName().compareToIgnoreCase(r1.getName());
                     }
                 }

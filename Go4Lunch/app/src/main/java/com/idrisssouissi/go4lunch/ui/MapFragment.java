@@ -93,6 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         clickOnSearchButton();
 
 
+
         viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair -> {
             List<User> users = pair.second;
             List<Restaurant> restaurants = pair.first;

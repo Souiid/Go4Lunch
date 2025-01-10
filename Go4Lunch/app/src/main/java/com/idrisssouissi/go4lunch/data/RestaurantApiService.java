@@ -1,9 +1,21 @@
 package com.idrisssouissi.go4lunch.data;
 
+import android.util.Log;
+
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import kotlin.Triple;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -19,19 +31,125 @@ public class RestaurantApiService {
 
     public List<Restaurant> fetchNearbyRestaurants(double latitude, double longitude) throws IOException {
         String location = latitude + "," + longitude;
-        Call<NearbySearchResponse> call = restaurantApi.fetchNearbyRestaurants(location, 500, "restaurant", API_KEY);
 
-        // Appel synchrone
+        // Appel API Nearby Search pour récupérer les restaurants
+        Call<NearbySearchResponse> call = restaurantApi.fetchNearbyRestaurants(location, 500, "restaurant", API_KEY);
         Response<NearbySearchResponse> response = call.execute();
 
         if (response.isSuccessful() && response.body() != null) {
-            // Mappe les RestaurantResult en Restaurant
-            return mapResultsToRestaurants(response.body().results);
+            // Mapper les résultats de Nearby Search en objets Restaurant
+            List<Restaurant> restaurants = mapResultsToRestaurants(response.body().results);
+
+            // Pour chaque restaurant, récupérer les horaires via Place Details
+            for (Restaurant restaurant : restaurants) {
+                LocalTime[] openingHours = fetchOpeningHoursForRestaurant(restaurant.getId());
+                restaurant.setOpenHours(openingHours); // Mettre à jour les horaires
+            }
+
+            return restaurants;
         } else {
             throw new IOException("Request failed with code: " + response.code());
         }
     }
 
+    public LocalTime[] fetchOpeningHoursForRestaurant(String placeId) throws IOException {
+        // Effectue un appel à l'API Place Details
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        LocalTime currentTime = LocalTime.now();
+        Call<RestaurantDetailsResponse> call = restaurantApi.getRestaurantDetails(
+                placeId,
+                "opening_hours", // Spécifie qu'on veut récupérer uniquement les horaires d'ouverture
+                API_KEY
+        );
+
+        // Exécution synchrone de l'appel
+        Response<RestaurantDetailsResponse> response = call.execute();
+
+        // Vérifie si la réponse est réussie et contient des données
+        if (response.isSuccessful() && response.body() != null) {
+            RestaurantDetailsResponse.RestaurantDetail result = response.body().result;
+
+            // Vérifie si les horaires sont présents
+            if (result.openingHours != null && result.openingHours.weekdayText != null) {
+                Log.d("ggg", "Opening hours" + result.openingHours.weekdayText);
+                String hourlyText = String.valueOf(getDayFromWeekdayText(result.openingHours.weekdayText));
+                String hoursFromDay = getHoursFromTheDay(hourlyText);
+                return extractHours(hoursFromDay);
+            }
+        }
+
+        // Retourne "Unknown" si aucune donnée valide n'est disponible
+        return new LocalTime[2];
+    }
+
+    private LocalTime parseToLocalTime(String timeStr) {
+        // Définir les formats
+        DateTimeFormatter formatterWithAMPM = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+        DateTimeFormatter formatter24h = DateTimeFormatter.ofPattern("H:mm", Locale.ENGLISH);
+
+        // Log avant transformation
+        Log.d("www", "Original timeStr: " + timeStr);
+
+        // Vérifier si la chaîne contient AM ou PM
+        if (timeStr.toUpperCase().contains("AM") || timeStr.toUpperCase().contains("PM")) {
+            String cleanedTimeStr = timeStr.replace("\u202F", " ").toUpperCase();
+            LocalTime parsedTime = LocalTime.parse(cleanedTimeStr, formatterWithAMPM);
+            return parsedTime;
+        } else {
+            String cleanedTimeStr = timeStr.replace("\u202F", " ");
+            LocalTime parsedTime = LocalTime.parse(cleanedTimeStr, formatter24h);
+            return parsedTime;
+        }
+    }
+
+    private String getHoursFromTheDay(String hourlyText) {
+        int colonIndex = hourlyText.indexOf(':'); // Trouve l'index du premier ':'
+        String hourlyTextModify = hourlyText;
+        if (colonIndex != -1) {
+            hourlyTextModify = hourlyText.substring(colonIndex + 1).trim(); // Prend tout après ':'
+
+            // Supprime le crochet fermant ']' s'il existe
+            int closingBracketIndex = hourlyTextModify.indexOf(']');
+            if (closingBracketIndex != -1) {
+                hourlyTextModify = hourlyTextModify.substring(0, closingBracketIndex).trim();
+            }
+
+            // Supprime tout après la virgule, si elle existe
+            int commaIndex = hourlyTextModify.indexOf(',');
+            if (commaIndex != -1) {
+                hourlyTextModify = hourlyTextModify.substring(0, commaIndex).trim();
+            }
+        }
+        Log.d("aaa", "HourlyTextModify: " + hourlyTextModify);
+        return hourlyTextModify;
+    }
+
+    private LocalTime[] extractHours(String input) {
+        String regex = "(\\d{1,2}:\\d{2}(?:\\s*(?:AM|PM))?)\\s*–\\s*(\\d{1,2}:\\d{2}(?:\\s*(?:AM|PM))?)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            String heure1 = matcher.group(1).trim();
+            String heure2 = matcher.group(2).trim();
+            Log.d("aaa", "SimpleHours:" + heure1 + "-" + heure2);
+
+            // Convertir en LocalTime
+            return new LocalTime[]{parseToLocalTime(heure1), parseToLocalTime(heure2)};
+        }
+
+        return new LocalTime[]{null, null}; // Retourne null si le format n'est pas reconnu
+    }
+
+    private Optional<String> getDayFromWeekdayText(List<String> weekdayText) {
+        LocalDate today = LocalDate.now();
+        int intDayOfWeek = today.getDayOfWeek().getValue();
+        try {
+            return Optional.ofNullable(weekdayText.get(intDayOfWeek - 1));
+        }catch(Exception e) {
+            return Optional.empty();
+        }
+    }
 
     private List<Restaurant> mapResultsToRestaurants(List<NearbySearchResponse.RestaurantResult> results) {
         List<Restaurant> restaurants = new ArrayList<>();
@@ -43,10 +161,8 @@ public class RestaurantApiService {
                 photoUrl = getPhotoUrl(result.photos.get(0).photoReference);
             }
 
-            String openHours = "Unknown";
-            if (result.openingHours != null && result.openingHours.openNow != null) {
-                openHours = result.openingHours.openNow ? "Open now" : "Closed now";
-            }
+            LocalTime[] openHours = new LocalTime[2];
+
 
             Restaurant restaurant = new Restaurant(
                     result.placeId,
@@ -66,8 +182,6 @@ public class RestaurantApiService {
         }
         return restaurants;
     }
-
-
 
     public Triple<String, String, String> getRestaurantDetailsFromId(String restaurantId) throws IOException {
         Call<RestaurantDetailsResponse> call = restaurantApi.getRestaurantDetails(

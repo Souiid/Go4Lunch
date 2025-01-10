@@ -17,6 +17,8 @@ import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.databinding.RestaurantItemBinding;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +81,27 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
                 Float distance = restaurant.getDistance().get();
                 binding.distanceTV.setText(viewModel.formatDistance(distance));
             }
-            binding.hourlyTV.setText(restaurant.getOpenHours());
+            LocalTime openLocalTime = restaurant.getOpenHours()[0];
+            LocalTime closeLocalTime = restaurant.getOpenHours()[1];
+
+            LocalTime now = LocalTime.now(); // Heure actuelle
+
+            String textToDisplay = "Open until: " + closeLocalTime.toString();
+
+            if (now.isBefore(openLocalTime)) {
+                textToDisplay = "Closed now, open at " + openLocalTime.toString();
+            }
+
+            if (now.isAfter(closeLocalTime)) {
+                textToDisplay = "Closed now";
+            }
+
+            Duration timeUntilClose = Duration.between(now, closeLocalTime);
+            if (timeUntilClose.toMinutes() <= 30) {
+                textToDisplay = "Closing soon, close at " + closeLocalTime;
+            }
+
+            binding.hourlyTV.setText(textToDisplay);
             binding.peopleCountTV.setVisibility(View.INVISIBLE);
             binding.iconPerson.setVisibility(View.INVISIBLE);
             if (restaurant.getNumberOfUsers().intValue() != 0) {

@@ -104,6 +104,7 @@ dependencies {
     implementation (libs.converter.gson)
 
     implementation(libs.fragment.ktx)
+
 }
 
 configurations.all {

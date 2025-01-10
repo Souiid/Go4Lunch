@@ -2,6 +2,8 @@ package com.idrisssouissi.go4lunch.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class RestaurantDetailsResponse {
     @SerializedName("result")
     public RestaurantDetail result;
@@ -15,5 +17,13 @@ public class RestaurantDetailsResponse {
 
         @SerializedName("formatted_phone_number")
         public String phoneNumber;
+
+        @SerializedName("opening_hours")
+        public OpeningHours openingHours;
+
+        public static class OpeningHours {
+            @SerializedName("weekday_text")
+            public List<String> weekdayText;
+        }
     }
 }

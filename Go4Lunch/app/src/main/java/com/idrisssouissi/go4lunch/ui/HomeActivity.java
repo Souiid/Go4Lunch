@@ -65,11 +65,20 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
             }
         }
 
-        // Définir l'heure de la notification
+// Définir l'heure de la notification (exemple : 15h30)
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, 5);
+        calendar.set(Calendar.HOUR_OF_DAY, 10); // Remplace par l'heure souhaitée (format 24h)
+        calendar.set(Calendar.MINUTE, 11);      // Remplace par les minutes souhaitées
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        // Intent vers le BroadcastReceiver
+// Vérifier si l'heure choisie est passée, alors programmer pour demain
+        Calendar now = Calendar.getInstance();
+        if (calendar.before(now)) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+// Intent vers le BroadcastReceiver
         Intent Aintent = new Intent(this, NotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this,
@@ -78,7 +87,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Configurer l'AlarmManager
+// Configurer l'AlarmManager
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.setExact(
@@ -132,7 +141,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                         if (!Objects.equals(restaurantID, "")) {
                             Intent intent = new Intent(HomeActivity.this, RestaurantDetailsActivity.class);
                             intent.putExtra("restaurantID", restaurantID);
-                            startActivity(intent);
+                            startActivityForResult(intent, 1);
                         } else {
                             Toast.makeText(HomeActivity.this, "You don't have selected a restaurant", Toast.LENGTH_SHORT).show();
                         }
