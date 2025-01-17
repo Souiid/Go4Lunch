@@ -149,6 +149,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding.participationButton.setOnClickListener(v -> {
             isRestaurantSelected = !isRestaurantSelected;
             setTintParticipationButton();
+
+            //TODO:Schedule notfication, move it in viewModel
             firebaseApiService.updateSelectedRestaurant(restaurantID, isRestaurantSelected);
         });
     }

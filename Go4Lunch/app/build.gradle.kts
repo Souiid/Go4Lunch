@@ -105,6 +105,9 @@ dependencies {
 
     implementation(libs.fragment.ktx)
 
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("com.google.guava:guava:31.0.1-android")
+
 }
 
 configurations.all {

@@ -34,6 +34,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.NotificationReceiver;
+import com.idrisssouissi.go4lunch.NotificationScheduler;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.SettingsActivity;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
@@ -57,47 +58,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-//_________________________________________________NOTIFICATION TEST________________________________________________________________________________________________-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
-            }
-        }
-
-// Définir l'heure de la notification (exemple : 15h30)
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 10); // Remplace par l'heure souhaitée (format 24h)
-        calendar.set(Calendar.MINUTE, 11);      // Remplace par les minutes souhaitées
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-// Vérifier si l'heure choisie est passée, alors programmer pour demain
-        Calendar now = Calendar.getInstance();
-        if (calendar.before(now)) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-// Intent vers le BroadcastReceiver
-        Intent Aintent = new Intent(this, NotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this,
-                0,
-                Aintent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-// Configurer l'AlarmManager
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            alarmManager.setExact(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    pendingIntent
-            );
-        }
-//____________________________________________NOTIFICATION TEST______________________________________________________________________________________________________-
-
 
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
