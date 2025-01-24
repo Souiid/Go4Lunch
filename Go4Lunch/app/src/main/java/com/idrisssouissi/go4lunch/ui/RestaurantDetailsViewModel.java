@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
@@ -13,6 +14,10 @@ import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,11 +70,34 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public List<UserItem> getUsersByRestaurantID(String restaurantId) {
         ArrayList<UserItem> usersInRestaurant = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now(); // Date et heure actuelles
+        LocalTime limitTime = LocalTime.of(15, 0); // 15h00
+
         for (User user : Objects.requireNonNull(userRepository.getUsersLiveData().getValue())) {
             if (Objects.equals(user.getSelectedRestaurant().get("id"), restaurantId)) {
-                usersInRestaurant.add(new UserItem(user.getId(), user.getName(), "", user.getPhotoUrl()));
-            }
+                // Récupérer la date/heure de sélection comme Firebase Timestamp
+                Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
+                if (timestamp != null) {
+                    LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime(); // Conversion du timestamp
 
+                    LocalDate selectionDate = selectionDateTime.toLocalDate(); // Date de sélection
+                    LocalTime selectionTime = selectionDateTime.toLocalTime(); // Heure de sélection
+
+                    if (selectionDate.isEqual(now.toLocalDate())) {
+                        // Aujourd'hui
+                        if (selectionTime.isBefore(limitTime)) {
+                            usersInRestaurant.add(new UserItem(user.getId(), user.getName(), "", user.getPhotoUrl()));
+                        }
+                    } else if (selectionDate.isEqual(now.toLocalDate().minusDays(1))) {
+                        // Hier
+                        if (selectionTime.isAfter(limitTime)) {
+                            usersInRestaurant.add(new UserItem(user.getId(), user.getName(), "", user.getPhotoUrl()));
+                        }
+                    }
+                }
+            }
         }
         return usersInRestaurant;
     }

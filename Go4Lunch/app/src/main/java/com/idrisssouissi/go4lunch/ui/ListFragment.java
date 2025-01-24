@@ -18,12 +18,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.FragmentListBinding;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,7 +37,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class ListFragment extends Fragment implements RestaurantAdapter.OnRestaurantClickListener, SearchView.OnQueryTextListener{
+public class ListFragment extends Fragment implements RestaurantAdapter.OnRestaurantClickListener, SearchView.OnQueryTextListener {
 
     HomeViewModel viewModel;
 
@@ -48,7 +53,6 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
@@ -59,7 +63,7 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentListBinding.inflate(getLayoutInflater(), container, false);
-        return  binding.getRoot();
+        return binding.getRoot();
     }
 
     @Override
@@ -71,7 +75,7 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                 this.lastLocation = lastLocation;
             }
         });
-        
+
         binding.recyclerView.setVisibility(View.INVISIBLE);
         binding.noRestaurantFoundTV.setVisibility(View.INVISIBLE);
 
@@ -79,7 +83,6 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
         binding.recyclerView.setAdapter(adapter);
 
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
-            Log.d("ListFragment", "Restaurants updated: " + (restaurants != null ? restaurants.size() : 0));
 
             if (restaurants == null || restaurants.isEmpty()) {
                 binding.noRestaurantFoundTV.setVisibility(View.VISIBLE);
@@ -102,14 +105,38 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                         Integer restaurantNote = restaurant.getNote().intValue();
                         restaurant.setNote(restaurantNote + 1);
                     }
-                    if (user.getSelectedRestaurant().get("id").equals(restaurant.getId())) {
+
+                    // Application des conditions pour le restaurant sélectionné
+                    Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
+                    boolean respectsConditions = false;
+
+                    if (timestamp != null) {
+                        LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDateTime();
+                        LocalDate selectionDate = selectionDateTime.toLocalDate();
+                        LocalTime selectionTime = selectionDateTime.toLocalTime();
+
+                        LocalDate today = LocalDate.now();
+                        LocalTime limitTime = LocalTime.of(15, 0);
+
+                        if (selectionDate.isEqual(today)) {
+                            if (selectionTime.isBefore(limitTime)) {
+                                respectsConditions = true;
+                            }
+                        } else if (selectionDate.isEqual(today.minusDays(1))) {
+                            if (selectionTime.isAfter(limitTime)) {
+                                respectsConditions = true;
+                            }
+                        }
+                    }
+
+                    if (respectsConditions && user.getSelectedRestaurant().get("id").equals(restaurant.getId())) {
                         Integer numberOfUsers = restaurant.getNumberOfUsers().intValue();
                         restaurant.setNumberOfUsers(numberOfUsers + 1);
                     }
                 }
-                Log.d("ttt", "Nombre final d'utilisateurs pour le restaurant " + restaurant.getId() + ": " + restaurant.getNumberOfUsers());
             }
-
 
             binding.recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
             adapter.updateRestaurants(restaurants);

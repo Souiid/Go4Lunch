@@ -2,13 +2,9 @@ package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,16 +29,11 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.idrisssouissi.go4lunch.Go4Lunch;
-import com.idrisssouissi.go4lunch.NotificationReceiver;
 import com.idrisssouissi.go4lunch.NotificationScheduler;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.SettingsActivity;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
-
-
-import java.util.Calendar;
 import java.util.Objects;
-
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class HomeActivity extends AppCompatActivity implements OnRestaurantSelectedListener {
@@ -58,6 +49,8 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        NotificationScheduler.scheduleNotification(this);
+
 
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
@@ -103,7 +96,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                             intent.putExtra("restaurantID", restaurantID);
                             startActivityForResult(intent, 1);
                         } else {
-                            Toast.makeText(HomeActivity.this, "You don't have selected a restaurant", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeActivity.this, getString(R.string.you_dont_selected_restaurant), Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.nav_settings:
@@ -175,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         MenuItem searchItem = menu.findItem(R.id.search_item);
         androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
 
-        searchView.setQueryHint("Search...");
+        searchView.setQueryHint(getString(R.string.search));
         searchView.setIconifiedByDefault(true);
 
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
@@ -188,7 +181,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 viewModel.initRestaurants();
-            //    Toast.makeText(HomeActivity.this, "Search view closed", Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(HomeActivity.this, "Search view closed", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -202,7 +195,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 } else if (currentFragment instanceof MapFragment) {
                     viewModel.filterUsersByQuery(query);
                 }
-                Toast.makeText(HomeActivity.this, "Searching for: " + query, Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -213,7 +205,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                     if (currentFragment instanceof ListFragment) {
                         ((ListFragment) currentFragment).onQueryTextSubmit(newText);
                     }
-                    Toast.makeText(HomeActivity.this, "Search text cleared", Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
@@ -253,7 +244,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            Log.d("HomeActivity", "onActivityResult called from RestaurantDetailsActivity");
             viewModel.refreshUsers();
         }
     }
@@ -270,25 +260,20 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 switch (item.getItemId()) {
                     case R.id.sort_by_note:
                         viewModel.sortRestaurantsByNote(true);
-                        Toast.makeText(getApplicationContext(), "Option 1 selected", Toast.LENGTH_SHORT).show();
                         return true;
 
                     case R.id.sort_by_note2:
                         viewModel.sortRestaurantsByNote(false);
                         return true;
-
                     case R.id.sort_by_distance:
                         viewModel.sortRestaurantsByDistance();
-                        Toast.makeText(getApplicationContext(), "Option 2 selected", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.alphabetical_order:
                         viewModel.sortRestaurantsByName(true);
-                        Toast.makeText(getApplicationContext(), "Option 3 selected", Toast.LENGTH_SHORT).show();
                         return true;
 
                     case R.id.alphabetical_order2:
                         viewModel.sortRestaurantsByName(false);
-                        Toast.makeText(getApplicationContext(), "Option 3 selected", Toast.LENGTH_SHORT).show();
                         return true;
                     default:
                         return false;

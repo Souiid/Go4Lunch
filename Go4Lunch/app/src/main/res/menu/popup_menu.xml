@@ -4,25 +4,25 @@
     <item
         android:enabled="false"
         android:icon="@null"
-        android:title="Sort by :" />
+        android:title="@string/sort_by" />
 
     <item
         android:id="@+id/sort_by_note"
-        android:title="Note (ascending)" />
+        android:title="@string/note_ascending" />
 
     <item
         android:id="@+id/sort_by_note2"
-        android:title="Note (descending)" />
+        android:title="@string/note_descending" />
     <item
         android:id="@+id/sort_by_distance"
-        android:title="Distance" />
+        android:title="@string/distance" />
     <item
         android:id="@+id/alphabetical_order"
-        android:title="Alphabetical order (A > Z)" />
+        android:title="@string/alphabetical_order_a_z" />
 
     <item
         android:id="@+id/alphabetical_order2"
-        android:title="Alphabetical order (Z > A)" />
+        android:title="@string/alphabetical_order_z_a" />
 
 
 </menu>

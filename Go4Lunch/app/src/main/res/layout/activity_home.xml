@@ -15,9 +15,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#F4511E"
-            app:title="I’m Hungry!"
-            app:titleTextColor="#FFFFFF"
+            android:background="@color/orange"
+            app:title="@string/im_hungry"
+            app:titleTextColor="@color/white"
             app:navigationIcon="@drawable/ic_menu"
             app:menu="@menu/toolbar_menu" />
 
@@ -43,7 +43,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu">
+        app:menu="@menu/drawer_menu"
+        android:background="@color/orange"
+        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/white">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -54,6 +57,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:contentDescription="@string/image"
                 android:src="@mipmap/ic_launcher"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"

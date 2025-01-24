@@ -62,14 +62,11 @@ public class RestaurantApiService {
                 API_KEY
         );
 
-        // Exécution synchrone de l'appel
         Response<RestaurantDetailsResponse> response = call.execute();
 
-        // Vérifie si la réponse est réussie et contient des données
         if (response.isSuccessful() && response.body() != null) {
             RestaurantDetailsResponse.RestaurantDetail result = response.body().result;
 
-            // Vérifie si les horaires sont présents
             if (result.openingHours != null && result.openingHours.weekdayText != null) {
                 Log.d("ggg", "Opening hours" + result.openingHours.weekdayText);
                 String hourlyText = String.valueOf(getDayFromWeekdayText(result.openingHours.weekdayText));
@@ -78,7 +75,6 @@ public class RestaurantApiService {
             }
         }
 
-        // Retourne "Unknown" si aucune donnée valide n'est disponible
         return new LocalTime[2];
     }
 
@@ -103,18 +99,16 @@ public class RestaurantApiService {
     }
 
     private String getHoursFromTheDay(String hourlyText) {
-        int colonIndex = hourlyText.indexOf(':'); // Trouve l'index du premier ':'
+        int colonIndex = hourlyText.indexOf(':');
         String hourlyTextModify = hourlyText;
         if (colonIndex != -1) {
-            hourlyTextModify = hourlyText.substring(colonIndex + 1).trim(); // Prend tout après ':'
+            hourlyTextModify = hourlyText.substring(colonIndex + 1).trim();
 
-            // Supprime le crochet fermant ']' s'il existe
             int closingBracketIndex = hourlyTextModify.indexOf(']');
             if (closingBracketIndex != -1) {
                 hourlyTextModify = hourlyTextModify.substring(0, closingBracketIndex).trim();
             }
 
-            // Supprime tout après la virgule, si elle existe
             int commaIndex = hourlyTextModify.indexOf(',');
             if (commaIndex != -1) {
                 hourlyTextModify = hourlyTextModify.substring(0, commaIndex).trim();
@@ -125,6 +119,14 @@ public class RestaurantApiService {
     }
 
     private LocalTime[] extractHours(String input) {
+        Log.d("aaa", "Input: " + input);
+        if (input.isEmpty()) {
+            return new LocalTime[]{null, null};
+        }
+
+        if (input.equals("Closed")) {
+            return new LocalTime[]{LocalTime.of(0, 0), LocalTime.of(0, 0)};
+        }
         String regex = "(\\d{1,2}:\\d{2}(?:\\s*(?:AM|PM))?)\\s*–\\s*(\\d{1,2}:\\d{2}(?:\\s*(?:AM|PM))?)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);

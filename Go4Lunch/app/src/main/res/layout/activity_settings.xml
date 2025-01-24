@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:contentDescription="@string/back"
         android:src="@drawable/ic_back"
         android:elevation="3dp"
         android:background="@color/fui_transparent"
@@ -29,16 +30,20 @@
         android:padding="12dp">
 
         <TextView
-            android:text="Notification"
+            android:text="@string/notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:layout_weight="2"/>
 
-        <Switch
-            android:id="@+id/notification_switch"
+        <Button
+            android:id="@+id/notificationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="#0F37F4"
+            android:text="@string/access_to_settings"
+            android:backgroundTint="#FFFFFF"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     </LinearLayout>

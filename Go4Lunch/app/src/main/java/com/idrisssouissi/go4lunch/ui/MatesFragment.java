@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.Go4Lunch;
+import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
@@ -17,6 +20,10 @@ import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.FragmentMatesBinding;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +81,9 @@ public class MatesFragment extends Fragment {
         binding.noUsersFoundTV.setVisibility(View.INVISIBLE);
         viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair -> {
             Executors.newSingleThreadExecutor().execute(() -> {
+                LocalDateTime now = LocalDateTime.now();
+                LocalTime limitTime = LocalTime.of(15, 0);
+
                 List<Restaurant> restaurantList = pair.first;
                 List<User> userList = pair.second;
                 if (userList == null || userList.isEmpty()) {
@@ -89,14 +99,35 @@ public class MatesFragment extends Fragment {
 
                     List<UserItem> newUserItemList = new ArrayList<>();
                     for (User user : userList) {
-                        String restaurantName = "Pas encore selectionné";
+                        String restaurantName = getString(R.string.not_yet_selected);
                         String selectedRestaurantID = user.getSelectedRestaurantID();
+                        Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
+                        LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDateTime();
+                        LocalDate selectionDate = selectionDateTime.toLocalDate();
+                        LocalTime selectionTime = selectionDateTime.toLocalTime();
+                        LocalDate today = LocalDate.now();
+                        boolean respectsConditions = false;
 
-                        if (selectedRestaurantID != null && restaurantMap.containsKey(selectedRestaurantID)) {
+                        if (selectionDate.isEqual(today)) {
+                            // Aujourd'hui
+                            if (selectionTime.isBefore(limitTime)) {
+                                respectsConditions = true;
+                            }
+                        } else if (selectionDate.isEqual(today.minusDays(1))) {
+                            // Hier
+                            if (selectionTime.isAfter(limitTime)) {
+                                respectsConditions = true;
+                            }
+                        }
+
+
+                        if (selectedRestaurantID != null && restaurantMap.containsKey(selectedRestaurantID) && respectsConditions) {
                             restaurantName = restaurantMap.get(selectedRestaurantID);
                             UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
                             newUserItemList.add(userItem);
-                        } else if (selectedRestaurantID != null && !restaurantMap.containsKey(selectedRestaurantID) && selectedRestaurantID != "") {
+                        } else if (selectedRestaurantID != null && !restaurantMap.containsKey(selectedRestaurantID) && !selectedRestaurantID.isEmpty() && respectsConditions) {
                             try {
                                 Triple<String, String, String> details = viewModel.getDistantRestaurantName(selectedRestaurantID);
                                 restaurantName = details.component1();

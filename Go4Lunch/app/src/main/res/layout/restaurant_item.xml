@@ -24,16 +24,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Le Zinc"
+                android:text="@string/le_zinc"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:layout_marginRight="8dp"/>
+                android:layout_marginEnd="8dp"/>
 
             <TextView
                 android:id="@+id/distanceTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="120m"
+                android:text="@string/_120m"
                 android:textSize="14sp"/>
         </LinearLayout>
 
@@ -48,7 +48,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="French - 12 rue du Faubourg Poissonnière"
+                android:text="@string/french_12_rue_du_faubourg_poissonni_re"
                 android:textSize="14sp"/>
 
             <ImageView
@@ -56,13 +56,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_mate"
-                android:layout_marginRight="4dp"/>
+                android:layout_marginEnd="4dp"/>
 
             <TextView
                 android:id="@+id/peopleCountTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(2)"
+                android:text="@string/_2"
                 android:textSize="14sp"/>
         </LinearLayout>
 
@@ -79,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Open until 7pm"
+                android:text="@string/open_until_7pm"
                 android:textSize="14sp"/>
 
             <LinearLayout

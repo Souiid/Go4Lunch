@@ -77,7 +77,6 @@ public class HomeViewModel extends ViewModel {
     }
 
     public LiveData<List<Restaurant>> getRestaurantsByFetch(Double latitude, Double longitude) throws IOException {
-        Log.d("aaa", "Fetching restaurants for lat: " + latitude + ", lon: " + longitude);
         List<Restaurant> restaurants = restaurantRepository.getRestaurantsByLocation(latitude, longitude);
         restaurantsLiveData.postValue(restaurants);
         return restaurantsLiveData;
@@ -86,8 +85,6 @@ public class HomeViewModel extends ViewModel {
     public void onNewData(List<Restaurant> restaurants, List<User> users) {
         if (restaurants != null && users != null) {
             uiStateLiveData.setValue(new Pair<>(restaurants, users));
-        } else {
-            Log.d("HomeViewModel", "onNewData called but one or both lists are null");
         }
     }
 
@@ -247,7 +244,6 @@ public class HomeViewModel extends ViewModel {
                     filteredRestaurants.add(restaurant);
                 }
             }
-            Log.d("Search", "Filtered restaurants count: " + filteredRestaurants.size());
             restaurantsLiveData.setValue(filteredRestaurants);
         }
     }
@@ -293,9 +289,6 @@ public class HomeViewModel extends ViewModel {
 
     public String getIsRestaurantSelected() {
         User currentUser = getCurrentUser();
-        Log.d("aaa", "GET CURRENT USER Restaurant: " + currentUser.getSelectedRestaurant());
-        Log.d("aaa", "GET CURRENT USER Restaurant ID: " + currentUser.getSelectedRestaurant().get("id"));
-        Log.d("aaa", "GET CURRENT USER Restaurant date: " + currentUser.getSelectedRestaurant().get("date"));
 
         String restaurantID = (String) currentUser.getSelectedRestaurant().get("id");
         Timestamp restaurantDate = (Timestamp) currentUser.getSelectedRestaurant().get("date");
@@ -309,7 +302,6 @@ public class HomeViewModel extends ViewModel {
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isAfter(limitDateTime) || Objects.equals(restaurantID, "")) {
-            Log.d("aaa", "Date dépassée");
             return "";
         }
         return restaurantID;

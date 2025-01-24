@@ -13,9 +13,9 @@ public class NotificationScheduler {
     public static void scheduleNotification(Context context) {
         Calendar now = Calendar.getInstance();
         Calendar targetTime = Calendar.getInstance();
-        targetTime.set(Calendar.HOUR_OF_DAY, 10);
-        targetTime.set(Calendar.MINUTE, 32);
-        targetTime.set(Calendar.SECOND, 45);
+        targetTime.set(Calendar.HOUR_OF_DAY, 11);
+        targetTime.set(Calendar.MINUTE, 35);
+        targetTime.set(Calendar.SECOND, 0);
 
         if (targetTime.before(now)) {
             targetTime.add(Calendar.DAY_OF_YEAR, 1);

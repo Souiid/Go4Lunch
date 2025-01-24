@@ -86,14 +86,19 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
             LocalTime now = LocalTime.now(); // Heure actuelle
 
-            String textToDisplay = "Open until: " + closeLocalTime.toString();
+            String textToDisplay = "";
 
-            if (now.isBefore(openLocalTime)) {
+            if (openLocalTime == null ) {
+                textToDisplay = "Unknow hourlies";
+            }else if (openLocalTime == LocalTime.of(0, 0) && closeLocalTime == LocalTime.of(0, 0) ) {
+                textToDisplay = "Closed today";
+
+            }else if (now.isBefore(openLocalTime)) {
                 textToDisplay = "Closed now, open at " + openLocalTime.toString();
-            }
-
-            if (now.isAfter(closeLocalTime)) {
+            }else if (now.isAfter(closeLocalTime)) {
                 textToDisplay = "Closed now";
+            }else {
+                textToDisplay = "Open until: " + closeLocalTime.toString();
             }
 
             Duration timeUntilClose = Duration.between(now, closeLocalTime);

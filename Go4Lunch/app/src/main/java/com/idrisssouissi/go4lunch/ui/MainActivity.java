@@ -14,6 +14,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.idrisssouissi.go4lunch.NotificationScheduler;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.User;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+
         Glide.with(this)
                 .load(R.drawable.pic)
                 .transform(new CenterCrop(), new BlurTransformation(25))
@@ -51,13 +53,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 signInWithGoogle();
-            }
-        });
-
-        binding.facebookSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signInWithFacebook();
             }
         });
 
@@ -104,17 +99,15 @@ public class MainActivity extends AppCompatActivity {
                         firebaseApiService.createUserInFirestore(user, new Runnable() {
                             @Override
                             public void run() {
-                                Log.d("aaa", "Utilisateur créé avec succès.");
                                 startHomeActivity();
                             }
                         });
                     } else {
-                        Log.d("aaa", "Utilisateur existant, connexion réussie.");
                         startHomeActivity();
                     }
                 }
             } else {
-                Toast.makeText(this, "Connexion échouée", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.connexion_failed), Toast.LENGTH_SHORT).show();
             }
         }
     }

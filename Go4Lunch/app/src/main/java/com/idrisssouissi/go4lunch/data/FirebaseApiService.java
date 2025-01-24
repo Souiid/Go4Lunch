@@ -76,7 +76,6 @@ public class FirebaseApiService {
                             User user = new User(id, email, name, photoUrl, selectedRestaurantMap, restaurantLikeIDs);
                             userList.add(user);
                         }
-                        Log.d("aaa", "FIRESTORE Utilisateurs récupérés avec succès.");
                         // Exécuter l'action de fin une fois les utilisateurs récupérés
                         completion.accept(userList);
                     } else {

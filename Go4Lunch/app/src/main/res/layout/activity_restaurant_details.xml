@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:contentDescription="@string/back"
         android:src="@drawable/ic_back"
         android:elevation="3dp"
         android:background="@color/fui_transparent"
@@ -23,6 +24,7 @@
         android:id="@+id/restaurant_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:contentDescription="@string/image"
         android:scaleType="centerCrop"
         android:src="@drawable/pic" />
 
@@ -38,7 +40,7 @@
             android:id="@+id/restaurant_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Le Zinc"
+            android:text="@string/le_zinc"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/white" />
@@ -52,14 +54,13 @@
             android:layout_alignTop="@id/restaurant_name"
             android:layout_alignBottom="@id/restaurant_name"
             android:layout_marginStart="10dp">
-            <!-- Les étoiles seront ajoutées ici dynamiquement -->
         </LinearLayout>
 
         <TextView
             android:id="@+id/restaurant_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="French restaurant - 12 rue du Faubourg Poissonnière"
+            android:text="@string/french_12_rue_du_faubourg_poissonni_re"
             android:textColor="@android:color/white"
             android:layout_below="@id/restaurant_name"
             android:layout_marginTop="8dp" />
@@ -70,6 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/restaurant_info"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:background="@android:color/white"
         android:padding="16dp"
@@ -82,18 +84,20 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
-            android:clickable="true">
+            android:clickable="true"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/call"
                 android:src="@drawable/ic_phone"
                 app:tint="@color/orange" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CALL"
+                android:text="@string/call"
                 android:textColor="@color/orange"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp" />
@@ -106,19 +110,21 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
-            android:clickable="true">
+            android:clickable="true"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:id="@+id/likeImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/like"
                 android:src="@drawable/ic_star"
                 app:tint="@color/orange" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LIKE"
+                android:text="@string/like"
                 android:textColor="@color/orange"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
@@ -131,18 +137,20 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
-            android:clickable="true">
+            android:clickable="true"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/website"
                 android:src="@drawable/ic_globe"
                 app:tint="@color/orange" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WEBSITE"
+                android:text="@string/website"
                 android:textColor="@color/orange"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
@@ -164,6 +172,7 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="-25dp"
         android:background="@drawable/circle_button"
+        android:contentDescription="@string/check"
         android:elevation="10dp"
         android:scaleType="center"
         android:src="@drawable/ic_check"

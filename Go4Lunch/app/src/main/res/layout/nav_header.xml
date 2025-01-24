@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"
@@ -12,6 +11,7 @@
         android:id="@+id/headerIV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/header"
         android:src="@drawable/pic"
         android:scaleType="centerCrop"/>
 
@@ -21,11 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="30dp"
-        android:text="Go4Lunch"
+        android:text="@string/app_name"
        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:textColor="@color/white"
-        android:textSize="30dp"/>
+        android:textSize="30sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,13 +51,13 @@
                 android:id="@+id/nameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="John smith"/>
+                android:text="@string/john_smith"/>
 
             <TextView
                 android:id="@+id/mailTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="jsmith.1337@gmail.com"/>
+                android:text="@string/jsmith_1337_gmail_com"/>
 
         </LinearLayout>
     </LinearLayout>

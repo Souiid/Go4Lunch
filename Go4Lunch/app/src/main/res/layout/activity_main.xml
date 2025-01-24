@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -11,6 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/image"
         android:src="@drawable/pic"
         android:scaleType="centerCrop"/>
 
@@ -19,6 +19,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_centerInParent="true"
+        android:contentDescription="@string/logo"
         android:src="@color/white"/>
 
     <TextView
@@ -27,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Find a nice restaurant and invite your co-workers for lunch!"
+        android:text="@string/find_a_nice_restaurant"
         android:textColor="@color/white"/>
 
     <LinearLayout
@@ -44,13 +45,6 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginBottom="10dp"/>
-
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/facebook_sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:padding="10dp" />
     </LinearLayout>
 
 </RelativeLayout>
