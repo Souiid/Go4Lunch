@@ -1,15 +1,14 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
     <string name="facebook_application_id" translatable="false">485270654163181</string>
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="navigation_drawer_open" translatable="false">Drawer Open</string>
-    <string name="navigation_drawer_close" translatable="false">Drawer Close</string>
-    <string name="default_web_client_id">26433778553-d1jgro8vhi706rda0anpcpnggi0r6hrv.apps.googleusercontent.com</string>
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Close</string>
+    <string name="default_web_client_id" translatable="false">26433778553-d1jgro8vhi706rda0anpcpnggi0r6hrv.apps.googleusercontent.com</string>
 
     <string name="you_dont_selected_restaurant">You don\'t have selected a restaurant</string>
     <string name="search">Search…</string>
-    <string name="not_yet_selected">Not yet selected</string>
-    <string name="im_hungry">I\'m hungry !</string>
+    <string name="has_not_yet_selected">has not yet selected</string>
+    <string name="im_hungry">I\'m hungry!</string>
     <string name="find_a_nice_restaurant">Find a nice restaurant and invite your co-workers for lunch !</string>
     <string name="call">Call</string>
     <string name="like">Like</string>
@@ -38,14 +37,15 @@
     <string name="your_lunch">Your Lunch</string>
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
-    <string name="sort_by">Sort by :</string>
+    <string name="sort_by">Sort by:</string>
     <string name="note_ascending">Note (ascending)</string>
     <string name="note_descending">Note (descending)</string>
     <string name="distance">Distance</string>
-    <string name="alphabetical_order_a_z"><![CDATA[Alphabetical order (A > Z)]]></string>
-    <string name="alphabetical_order_z_a"><![CDATA[Alphabetical order (Z > A)]]></string>
+    <string name="alphabetical_order_a_z">Alphabetical order (A > Z)></string>
+    <string name="alphabetical_order_z_a">Alphabetical order (Z > A)></string>
     <string name="sort">Sort</string>
     <string name="connexion_failed">Connexion failed</string>
+    <string name="to">to</string>
 
 
 </resources>

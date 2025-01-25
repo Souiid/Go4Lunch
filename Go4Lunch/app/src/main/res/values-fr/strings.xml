@@ -3,7 +3,7 @@
     <string name="app_name">Go4Lunch</string>
     <string name="you_dont_selected_restaurant">Vous n\'avez pas sélectionné de restaurant</string>
     <string name="search">Rechercher…</string>
-    <string name="not_yet_selected">Pas encore sélectionné</string>
+    <string name="has_not_yet_selected"> n\'a pas encore sélectionné</string>
     <string name="im_hungry">J\'ai faim !</string>
     <string name="find_a_nice_restaurant">Trouvez un bon restaurant et invitez vos collègues à déjeuner !</string>
     <string name="call">Appeler</string>
@@ -33,5 +33,6 @@
     <string name="alphabetical_order_z_a">Ordre alphabétique (Z > A)</string>
     <string name="sort">Trier</string>
     <string name="connexion_failed">Connexion échouée</string>
+    <string name="to">à</string>
 
 </resources>
