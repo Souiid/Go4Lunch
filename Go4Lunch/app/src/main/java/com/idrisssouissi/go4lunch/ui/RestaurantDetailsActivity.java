@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -25,9 +26,12 @@ import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
+import com.idrisssouissi.go4lunch.data.User;
+import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.ActivityRestaurantDetailsBinding;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import kotlin.Triple;
@@ -91,6 +95,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
+        List<UserItem> users = viewModel.getUsersByRestaurantID(restaurantID);
+        if (users.isEmpty()) {
+            binding.anyUsersTV.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.INVISIBLE);
+            return;
+        }
         UserAdapter adapter = new UserAdapter(viewModel.getUsersByRestaurantID(restaurantID), this, true);
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

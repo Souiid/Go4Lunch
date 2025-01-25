@@ -34,5 +34,5 @@
     <string name="sort">Trier</string>
     <string name="connexion_failed">Connexion échouée</string>
     <string name="to">à</string>
-
+    <string name="no_one">Personne ne déjeune ici</string>
 </resources>

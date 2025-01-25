@@ -46,6 +46,6 @@
     <string name="sort">Sort</string>
     <string name="connexion_failed">Connexion failed</string>
     <string name="to">to</string>
-
+    <string name="no_one">No one eats lunch here</string>
 
 </resources>
