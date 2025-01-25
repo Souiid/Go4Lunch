@@ -70,8 +70,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public List<UserItem> getUsersByRestaurantID(String restaurantId) {
         ArrayList<UserItem> usersInRestaurant = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now(); // Date et heure actuelles
-        LocalTime limitTime = LocalTime.of(15, 0); // 15h00
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime limitTime = LocalTime.of(15, 0);
 
         for (User user : Objects.requireNonNull(userRepository.getUsersLiveData().getValue())) {
             if (Objects.equals(user.getSelectedRestaurant().get("id"), restaurantId)) {

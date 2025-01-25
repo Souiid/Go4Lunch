@@ -1,6 +1,7 @@
 package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -20,16 +21,20 @@ import java.util.Objects;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private List<UserItem> userList;
+    private Context context;
+    private Boolean isDetails;
 
-    public UserAdapter(List<UserItem> userList) {
+    public UserAdapter(List<UserItem> userList, Context context, Boolean isDetails) {
         this.userList = userList;
+        this.context = context;
+        this.isDetails = isDetails;
     }
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         UserItemBinding binding = UserItemBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
-        return new UserViewHolder(binding);
+        return new UserViewHolder(binding, context, isDetails);
     }
 
     @Override
@@ -45,19 +50,28 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         private UserItemBinding binding;
+        private Context context;
+        private Boolean isDetails;
 
-        public UserViewHolder(UserItemBinding binding) {
+        public UserViewHolder(UserItemBinding binding, Context context, Boolean isDetails) {
             super(binding.getRoot());
             this.binding = binding;
+            this.context = context;
+            this.isDetails = isDetails;
         }
 
         @SuppressLint("SetTextI18n")
         public void bind(UserItem user) {
-            if (!Objects.equals(user.getRestaurantName(), "")) {
-                binding.userInfoTV.setText(user.getName() + " a " + user.getRestaurantName());
+            if (!isDetails) {
+                if (!Objects.equals(user.getRestaurantName(), "")) {
+                    binding.userInfoTV.setText(user.getName() + context.getString(R.string.to) + user.getRestaurantName());
+                }else {
+                    binding.userInfoTV.setText(user.getName() + " " + context.getString(R.string.has_not_yet_selected));
+                }
             }else {
                 binding.userInfoTV.setText(user.getName());
             }
+
             Glide.with(binding.getRoot().getContext())
                     .load(user.getPhotoUrl())
                     .placeholder(R.drawable.pic)

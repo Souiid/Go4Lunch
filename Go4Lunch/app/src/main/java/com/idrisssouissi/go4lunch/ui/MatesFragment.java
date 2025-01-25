@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +75,7 @@ public class MatesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        adapter = new UserAdapter(userItemList);
+        adapter = new UserAdapter(userItemList, requireContext(), false);
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -99,7 +101,7 @@ public class MatesFragment extends Fragment {
 
                     List<UserItem> newUserItemList = new ArrayList<>();
                     for (User user : userList) {
-                        String restaurantName = getString(R.string.not_yet_selected);
+                        String restaurantName = "";
                         String selectedRestaurantID = user.getSelectedRestaurantID();
                         Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
                         LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
@@ -140,6 +142,11 @@ public class MatesFragment extends Fragment {
                             UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
                             newUserItemList.add(userItem);
                         }
+
+                        Log.d("Debug", "User: " + user.getName());
+                        Log.d("Debug", "Selected Restaurant ID: " + selectedRestaurantID);
+                        Log.d("Debug", "Restaurant Name: " + restaurantName);
+                        Log.d("Debug", "Respects Conditions: " + respectsConditions);
                     }
 
                     requireActivity().runOnUiThread(() -> {

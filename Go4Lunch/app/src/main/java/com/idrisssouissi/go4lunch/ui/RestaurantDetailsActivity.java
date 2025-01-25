@@ -91,7 +91,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        UserAdapter adapter = new UserAdapter(viewModel.getUsersByRestaurantID(restaurantID));
+        UserAdapter adapter = new UserAdapter(viewModel.getUsersByRestaurantID(restaurantID), this, true);
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
