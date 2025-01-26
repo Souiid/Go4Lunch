@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +33,10 @@ import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.NotificationScheduler;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.SettingsActivity;
+import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.util.Objects;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -83,6 +87,22 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 .load(R.drawable.pic)
                 .transform(new CenterCrop(), new BlurTransformation(25))
                 .into((ImageView) binding.navView.getHeaderView(0).findViewById(R.id.headerIV));
+
+        TextView nameTV = binding.navView.getHeaderView(0).findViewById(R.id.nameTV);
+        TextView mailTV = binding.navView.getHeaderView(0).findViewById(R.id.mailTV);
+        CircularImageView profileIV = binding.navView.getHeaderView(0).findViewById(R.id.profileIV);
+
+        viewModel.usersLiveData.observe(this, users -> {
+            if (!users.isEmpty()) {
+               User currentUser = viewModel.getCurrentUser();
+               nameTV.setText(currentUser.getName());
+               mailTV.setText(currentUser.getEmail());
+               Glide.with(this)
+                       .load(currentUser.getPhotoUrl())
+                       .circleCrop()
+                       .into(profileIV);
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
@@ -142,11 +162,9 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 return true;
             }
         });
-        // Pour afficher le premier fragment par défaut
         if (savedInstanceState == null) {
             binding.bottomNavigation.setSelectedItemId(R.id.navigation_map);
         }
-
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> invalidateOptionsMenu());
     }
