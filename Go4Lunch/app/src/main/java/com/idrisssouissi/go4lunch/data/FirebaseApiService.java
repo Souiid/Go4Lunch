@@ -10,6 +10,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.protobuf.Any;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,25 +35,13 @@ public class FirebaseApiService {
     public void createUserInFirestore(FirebaseUser user, Runnable completion) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("name", user.getDisplayName());
-        userData.put("selectedRestaurantID", "");
+        userData.put("selectedRestaurant", new HashMap<String, Object>());
+        userData.put("restaurantLikeIDs", new ArrayList<String>());
         userData.put("photoUrl", user.getPhotoUrl().toString());
         userData.put("email", user.getEmail());
 
 
         db.collection("users").document(user.getUid())
-                .set(userData, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> completion.run())
-                .addOnFailureListener(e -> Log.w("Firestore", "Erreur lors de la création de l'utilisateur.", e));
-    }
-
-    public void createUserInFirestoreForTest(User user, Runnable completion) {
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("name", user.getName());
-        userData.put("selectedRestaurantID", "");
-        userData.put("photoUrl", user.getPhotoUrl().toString());
-        userData.put("email", user.getEmail());
-
-        db.collection("users").document()
                 .set(userData, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> completion.run())
                 .addOnFailureListener(e -> Log.w("Firestore", "Erreur lors de la création de l'utilisateur.", e));

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
-    <string name="facebook_application_id" translatable="false">485270654163181</string>
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Close</string>
     <string name="default_web_client_id" translatable="false">26433778553-d1jgro8vhi706rda0anpcpnggi0r6hrv.apps.googleusercontent.com</string>

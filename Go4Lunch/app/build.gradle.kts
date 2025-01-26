@@ -38,15 +38,12 @@ android {
             )
             buildConfigField("String", "GOOGLE_API_KEY", "\"${project.findProperty("GOOGLE_API_KEY") ?: ""}\"" )
             buildConfigField("String", "GOOGLE_GEO_API_KEY", "\"${project.findProperty("GOOGLE_GEO_API_KEY") ?: ""}\"" )
-
         }
 
         debug {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("String", "GOOGLE_API_KEY", "\"${project.findProperty("GOOGLE_API_KEY") ?: ""}\"" )
             buildConfigField("String", "GOOGLE_GEO_API_KEY", "\"${project.findProperty("GOOGLE_GEO_API_KEY") ?: ""}\"" )
-
-
         }
     }
 
