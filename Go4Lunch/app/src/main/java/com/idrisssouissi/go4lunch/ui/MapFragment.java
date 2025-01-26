@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
+import com.idrisssouissi.go4lunch.BuildConfig;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
@@ -44,7 +45,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private FragmentMapBinding binding;
-    private static final String API_KEY = "AIzaSyBig97MXmqFVmydv38OkE8d0SXxeCaTbtU";
+    private static final String API_KEY = BuildConfig.GOOGLE_API_KEY;
     private Double latitude;
     private Double longitude;
     HomeViewModel viewModel;

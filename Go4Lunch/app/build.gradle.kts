@@ -24,6 +24,9 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["GOOGLE_GEO_API_KEY"] = project.findProperty("GOOGLE_GEO_API_KEY") as String? ?: ""
+
     }
 
     buildTypes {
@@ -33,10 +36,17 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "GOOGLE_API_KEY", "\"${project.findProperty("GOOGLE_API_KEY") ?: ""}\"" )
+            buildConfigField("String", "GOOGLE_GEO_API_KEY", "\"${project.findProperty("GOOGLE_GEO_API_KEY") ?: ""}\"" )
+
         }
 
         debug {
             signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "GOOGLE_API_KEY", "\"${project.findProperty("GOOGLE_API_KEY") ?: ""}\"" )
+            buildConfigField("String", "GOOGLE_GEO_API_KEY", "\"${project.findProperty("GOOGLE_GEO_API_KEY") ?: ""}\"" )
+
+
         }
     }
 
@@ -46,6 +56,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 }

@@ -2,6 +2,8 @@ package com.idrisssouissi.go4lunch.data;
 
 import android.util.Log;
 
+import com.idrisssouissi.go4lunch.BuildConfig;
+
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -22,7 +24,7 @@ import retrofit2.Response;
 
 public class RestaurantApiService {
 
-    private static final String API_KEY = "AIzaSyBig97MXmqFVmydv38OkE8d0SXxeCaTbtU";
+    private static final String API_KEY = BuildConfig.GOOGLE_API_KEY;
     private final RestaurantApi restaurantApi;
 
     public RestaurantApiService() {
