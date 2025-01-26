@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
-    <string name="navigation_drawer_open">Drawer Open</string>
-    <string name="navigation_drawer_close">Drawer Close</string>
+    <string name="navigation_drawer_open" translatable="false">Drawer Open</string>
+    <string name="navigation_drawer_close" translatable="false">Drawer Close</string>
     <string name="default_web_client_id" translatable="false">26433778553-d1jgro8vhi706rda0anpcpnggi0r6hrv.apps.googleusercontent.com</string>
 
     <string name="you_dont_selected_restaurant">You don\'t have selected a restaurant</string>
@@ -19,17 +19,9 @@
     <string name="search_in_this_zone">Search in this zone</string>
     <string name="any_users_find">Any users find</string>
     <string name="header">header</string>
-    <string name="le_zinc" translatable="false">Le Zinc</string>
-    <string name="_120m" translatable="false">120m</string>
-    <string name="french_12_rue_du_faubourg_poissonni_re" translatable="false">French - 12 rue du Faubourg Poissonnière</string>
-    <string name="_2" translatable="false">(2)</string>
-    <string name="open_until_7pm" translatable="false">Open until 7pm</string>
-    <string name="john_is_joining" translatable="false">John is joining !</string>
     <string name="image">image</string>
     <string name="logo">logo</string>
     <string name="check">check</string>
-    <string name="john_smith" translatable="false">John smith</string>
-    <string name="jsmith_1337_gmail_com" translatable="false">jsmith.1337@gmail.com</string>
     <string name="map_view">Map View</string>
     <string name="list_view">List View</string>
     <string name="work_mates">Work mate</string>
@@ -46,5 +38,15 @@
     <string name="connexion_failed">Connexion failed</string>
     <string name="to">to</string>
     <string name="no_one">No one eats lunch here</string>
+
+    <!-- Template to build UI -->
+    <string name="restaurant_name_template" translatable="false">Le Zinc</string>
+    <string name="distance_template" translatable="false">120m</string>
+    <string name="address_template" translatable="false">French - 12 rue du Faubourg Poissonnière</string>
+    <string name="number_of_users_template" translatable="false">(2)</string>
+    <string name="hour_template" translatable="false">Open until 7pm</string>
+    <string name="john_is_joining" translatable="false">John is joining !</string>
+    <string name="john_smith" translatable="false">John smith</string>
+    <string name="jsmith_1337_gmail_com" translatable="false">jsmith.1337@gmail.com</string>
 
 </resources>

@@ -40,7 +40,7 @@
             android:id="@+id/restaurant_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/le_zinc"
+            android:text="@string/restaurant_name_template"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/white" />
@@ -60,7 +60,7 @@
             android:id="@+id/restaurant_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/french_12_rue_du_faubourg_poissonni_re"
+            android:text="@string/address_template"
             android:textColor="@android:color/white"
             android:layout_below="@id/restaurant_name"
             android:layout_marginTop="8dp" />
