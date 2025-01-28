@@ -102,6 +102,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public LiveData<List<Restaurant>> getRestaurants() {
+        restaurantsLiveData.setValue(restaurantRepository.getRestaurants());
         return restaurantsLiveData;
     }
 
@@ -170,7 +171,8 @@ public class HomeViewModel extends ViewModel {
 
     // Tri par note (rating)
     public void sortRestaurantsByNote(Boolean isAscendant) {
-        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
+        List<Restaurant> currentRestaurants = new ArrayList<>(restaurantRepository.getRestaurants());
+        Log.d("ppp", "Current list before: " + currentRestaurants);
         if (currentRestaurants != null) {
             Collections.sort(currentRestaurants, new Comparator<Restaurant>() {
                 @Override
@@ -184,6 +186,8 @@ public class HomeViewModel extends ViewModel {
                     }
                 }
             });
+            Log.d("ppp", "Sorted list after: " + currentRestaurants);
+
             // Met à jour les restaurants triés dans LiveData
             restaurantsLiveData.setValue(currentRestaurants);
         }

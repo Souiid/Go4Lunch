@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -58,6 +59,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
 
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
+        Log.d("ppp", "Activity ViewModel instance: " + viewModel);
         Go4Lunch.getAppComponent().inject(this);
 
         viewModel.getUserConnectionStatus().observe(this, isConnected -> {

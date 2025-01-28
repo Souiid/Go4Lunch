@@ -54,8 +54,9 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
-        viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        Log.d("ppp", "Fragment ViewModel instance: " + viewModel);
+
     }
 
     @Override
@@ -83,7 +84,8 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
         binding.recyclerView.setAdapter(adapter);
 
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
-
+            Log.d("ppp", "Observed updated list: " + restaurants);
+            binding.noRestaurantFoundTV.setVisibility(View.INVISIBLE);
             if (restaurants == null || restaurants.isEmpty()) {
                 binding.noRestaurantFoundTV.setVisibility(View.VISIBLE);
                 binding.progressBar.setVisibility(View.GONE);
