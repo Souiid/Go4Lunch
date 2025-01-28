@@ -2,6 +2,7 @@ package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -63,6 +64,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         @SuppressLint("SetTextI18n")
         public void bind(UserItem user) {
             if (!isDetails) {
+                if (Objects.equals(user.getId(), "WlftA4cIMgSQ4Al0RqXnwIqJwQr2")) {
+                    Log.d("ttt", "Idriss souissi mange à  " + user.getRestaurantName());
+                }
                 if (!Objects.equals(user.getRestaurantName(), "")) {
                     binding.userInfoTV.setText(user.getName() + context.getString(R.string.to) + user.getRestaurantName());
                 }else {

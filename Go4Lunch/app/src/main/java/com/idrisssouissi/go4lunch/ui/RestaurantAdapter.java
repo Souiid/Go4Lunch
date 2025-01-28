@@ -88,22 +88,21 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
             String textToDisplay = "";
 
-            if (openLocalTime == null ) {
-                textToDisplay = "Unknow hourlies";
-            }else if (openLocalTime == LocalTime.of(0, 0) && closeLocalTime == LocalTime.of(0, 0) ) {
+            if (openLocalTime == null || closeLocalTime == null) {
+                textToDisplay = "Unknown hourlies";
+            } else if (openLocalTime.equals(LocalTime.of(0, 0)) && closeLocalTime.equals(LocalTime.of(0, 0))) {
                 textToDisplay = "Closed today";
-
-            }else if (now.isBefore(openLocalTime)) {
+            } else if (now.isBefore(openLocalTime)) {
                 textToDisplay = "Closed now, open at " + openLocalTime.toString();
-            }else if (now.isAfter(closeLocalTime)) {
+            } else if (now.isAfter(closeLocalTime)) {
                 textToDisplay = "Closed now";
-            }else {
-                textToDisplay = "Open until: " + closeLocalTime.toString();
-            }
-
-            Duration timeUntilClose = Duration.between(now, closeLocalTime);
-            if (timeUntilClose.toMinutes() <= 30) {
-                textToDisplay = "Closing soon, close at " + closeLocalTime;
+            } else {
+                Duration timeUntilClose = Duration.between(now, closeLocalTime);
+                if (timeUntilClose.toMinutes() <= 30) {
+                    textToDisplay = "Closing soon, close at " + closeLocalTime.toString();
+                } else {
+                    textToDisplay = "Open until: " + closeLocalTime.toString();
+                }
             }
 
             binding.hourlyTV.setText(textToDisplay);

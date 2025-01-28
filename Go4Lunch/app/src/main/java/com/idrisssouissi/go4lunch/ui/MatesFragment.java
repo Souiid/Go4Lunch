@@ -84,7 +84,7 @@ public class MatesFragment extends Fragment {
         viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair -> {
             Executors.newSingleThreadExecutor().execute(() -> {
                 LocalDateTime now = LocalDateTime.now();
-                LocalTime limitTime = LocalTime.of(15, 0);
+                LocalTime limitTime = LocalTime.of(19, 0);
 
                 List<Restaurant> restaurantList = pair.first;
                 List<User> userList = pair.second;
