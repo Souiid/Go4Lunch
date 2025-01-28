@@ -171,7 +171,7 @@ public class HomeViewModel extends ViewModel {
 
     // Tri par note (rating)
     public void sortRestaurantsByNote(Boolean isAscendant) {
-        List<Restaurant> currentRestaurants = new ArrayList<>(restaurantRepository.getRestaurants());
+        List<Restaurant> currentRestaurants = restaurantsLiveData.getValue();
         Log.d("ppp", "Current list before: " + currentRestaurants);
         if (currentRestaurants != null) {
             Collections.sort(currentRestaurants, new Comparator<Restaurant>() {

@@ -133,8 +133,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 drawerLayout.closeDrawers();
                 return true;
             }
-
-
         });
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -178,16 +176,16 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
 
         // Handle the visibility of the sort item
         MenuItem sortItem = menu.findItem(R.id.action_sort);
+        MenuItem searchViewItem = menu.findItem(R.id.search_item);
+
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof ListFragment) {
-            sortItem.setVisible(true);
-        } else {
-            sortItem.setVisible(false);
-        }
+        sortItem.setVisible(currentFragment instanceof ListFragment);
+
+        searchViewItem.setVisible(!(currentFragment instanceof MatesFragment));
 
         // Setup the SearchView
         MenuItem searchItem = menu.findItem(R.id.search_item);
-        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
+        SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
 
         searchView.setQueryHint(getString(R.string.search));
         searchView.setIconifiedByDefault(true);
@@ -214,19 +212,13 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                 if (currentFragment instanceof ListFragment) {
                     ((ListFragment) currentFragment).onQueryTextSubmit(query);
                 } else if (currentFragment instanceof MapFragment) {
-                    viewModel.filterUsersByQuery(query);
+                    ((MapFragment) currentFragment).onQueryTextSubmit(query);
                 }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                    if (currentFragment instanceof ListFragment) {
-                        ((ListFragment) currentFragment).onQueryTextSubmit(newText);
-                    }
-                }
                 return false;
             }
         });
@@ -237,15 +229,11 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sort:
-                showPopupMenu(findViewById(R.id.action_sort));
-                return true;
-            case R.id.search_item:
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_sort) {
+            showPopupMenu(findViewById(R.id.action_sort));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -56,7 +56,6 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         Log.d("ppp", "Fragment ViewModel instance: " + viewModel);
-
     }
 
     @Override
@@ -86,9 +85,12 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             Log.d("ppp", "Observed updated list: " + restaurants);
             binding.noRestaurantFoundTV.setVisibility(View.INVISIBLE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+
             if (restaurants == null || restaurants.isEmpty()) {
                 binding.noRestaurantFoundTV.setVisibility(View.VISIBLE);
                 binding.progressBar.setVisibility(View.GONE);
+                binding.recyclerView.setVisibility(View.GONE);
                 return;
             }
             for (Restaurant restaurant : restaurants) {

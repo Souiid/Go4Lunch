@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -40,7 +41,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, SearchView.OnQueryTextListener {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
@@ -72,8 +73,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
-        viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
     }
 
     @Override
@@ -210,6 +210,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void fetchNearbyRestaurants(double latitude, double longitude) throws IOException {
         restaurantsLiveData = viewModel.getRestaurantsByFetch(latitude, longitude);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        viewModel.filterRestaurantsByName(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
 
