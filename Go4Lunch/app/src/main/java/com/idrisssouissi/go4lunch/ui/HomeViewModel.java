@@ -137,7 +137,7 @@ public class HomeViewModel extends ViewModel {
                 // Vérifier si la date du restaurant est aujourd’hui
                 if (restaurantDay.equals(todayDate)) {
                     // Ajouter la limite de 15h
-                    restaurantCalendar.set(Calendar.HOUR_OF_DAY, 15);
+                    restaurantCalendar.set(Calendar.HOUR_OF_DAY, 19);
                     restaurantCalendar.set(Calendar.MINUTE, 0);
                     restaurantCalendar.set(Calendar.SECOND, 0);
                     Timestamp fifteenOClockRestaurantDay = new Timestamp(restaurantCalendar.getTime());

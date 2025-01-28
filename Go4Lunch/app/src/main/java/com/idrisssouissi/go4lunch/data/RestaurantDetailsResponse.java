@@ -15,6 +15,9 @@ public class RestaurantDetailsResponse {
         @SerializedName("website")
         public String website;
 
+        @SerializedName("formatted_address")
+        public String address;
+
         @SerializedName("formatted_phone_number")
         public String phoneNumber;
 

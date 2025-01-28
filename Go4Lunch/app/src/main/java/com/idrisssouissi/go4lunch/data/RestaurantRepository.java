@@ -51,7 +51,7 @@ public class RestaurantRepository {
     }
 
     public Triple<String, String, String> getRestaurantContact(String restaurantId) throws IOException {
-        return restaurantApiService.getRestaurantDetailsFromId(restaurantId);
+        return restaurantApiService.getRestaurantDetailsFromId(restaurantId, false);
     }
 
 }

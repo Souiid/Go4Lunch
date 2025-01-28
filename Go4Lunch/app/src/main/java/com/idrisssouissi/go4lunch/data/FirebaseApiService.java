@@ -1,5 +1,7 @@
 package com.idrisssouissi.go4lunch.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.firebase.Timestamp;
@@ -11,6 +13,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.protobuf.Any;
+import com.idrisssouissi.go4lunch.NotificationScheduler;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,21 +76,27 @@ public class FirebaseApiService {
                 });
     }
 
-    public void updateSelectedRestaurant(String restaurantId, Boolean isSelected) {
+    public void updateSelectedRestaurant(String restaurantId, Boolean isSelected, Context context) {
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         DocumentReference userDocRef = db.collection("users").document(userId);
 
         Map<String, Object> selectedRestaurant = new HashMap<>();
         selectedRestaurant.put("id", restaurantId);
         selectedRestaurant.put("date", Timestamp.now());
-
+        SharedPreferences sharedPreferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if (!isSelected) {
+            NotificationScheduler.cancelNotification(context);
+            editor.putString("restaurantID", "");
+            editor.apply();
             selectedRestaurant.put("id", "");
-
         }
 
         userDocRef.update("selectedRestaurant", selectedRestaurant)
                 .addOnSuccessListener(aVoid -> {
+                    editor.putString("restaurantID", restaurantId);
+                    editor.apply();
+                    NotificationScheduler.scheduleNotification(context);
                     System.out.println("Selected restaurant updated successfully!");
                 })
                 .addOnFailureListener(e -> {
@@ -118,6 +127,30 @@ public class FirebaseApiService {
                         System.err.println("Erreur lors du retrait du like : " + e.getMessage());
                     });
         }
+    }
+
+    public void getUserNamesInRestaurant(String restaurantId, Consumer<List<String>> completion) {
+        db.collection("users")
+                .whereEqualTo("selectedRestaurant.id", restaurantId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<String> userNames = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String userName = document.getString("name");
+
+                            if (userName != null) {
+                                //TODO: add name according to times
+                                userNames.add(userName);
+                            }
+                        }
+                        // Retourner la liste des noms des utilisateurs
+                        completion.accept(userNames);
+                    } else {
+                        Log.w("Firestore", "Erreur lors de la récupération des utilisateurs.", task.getException());
+                        completion.accept(new ArrayList<>()); // Retourner une liste vide en cas d'erreur
+                    }
+                });
     }
 
     public void signOut() {

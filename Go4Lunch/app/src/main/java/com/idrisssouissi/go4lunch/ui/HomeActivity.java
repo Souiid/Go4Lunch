@@ -2,7 +2,9 @@ package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,12 +36,17 @@ import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.NotificationScheduler;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.SettingsActivity;
+import com.idrisssouissi.go4lunch.data.RestaurantApiService;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import kotlin.Triple;
 
 public class HomeActivity extends AppCompatActivity implements OnRestaurantSelectedListener {
 
@@ -47,6 +54,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
     private ActionBarDrawerToggle toggle;
     ActivityHomeBinding binding;
     private HomeViewModel viewModel;
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -54,10 +62,8 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        NotificationScheduler.scheduleNotification(this);
-        //Test
 
-
+        sharedPreferences = getApplication().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
         Log.d("ppp", "Activity ViewModel instance: " + viewModel);
@@ -104,6 +110,10 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                        .load(currentUser.getPhotoUrl())
                        .circleCrop()
                        .into(profileIV);
+
+               SharedPreferences.Editor editor = sharedPreferences.edit();
+               editor.putString("restaurantID", currentUser.getSelectedRestaurantID());
+               editor.apply();
             }
         });
 

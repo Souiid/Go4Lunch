@@ -10,10 +10,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -187,21 +185,28 @@ public class RestaurantApiService {
         return restaurants;
     }
 
-    public Triple<String, String, String> getRestaurantDetailsFromId(String restaurantId) throws IOException {
+    public Triple<String, String, String> getRestaurantDetailsFromId(String restaurantId, Boolean isForNotification) throws IOException {
         Call<RestaurantDetailsResponse> call = restaurantApi.getRestaurantDetails(
                 restaurantId,
-                "name,website,formatted_phone_number,opening_hours",
+                "name,website,formatted_phone_number,opening_hours,formatted_address",
                 API_KEY
         );
 
         // Appel synchrone
         Response<RestaurantDetailsResponse> response = call.execute();
 
+
         if (response.isSuccessful() && response.body() != null) {
             RestaurantDetailsResponse.RestaurantDetail result = response.body().result;
+            Log.d("ppp", "RestaurantDetails: " + result.address);
 
-            // Mapper les détails dans un objet Restaurant
-            return new Triple<>(result.name, result.phoneNumber, result.website);
+            // Mapper les détails dans un objet Restaurant`
+            if (isForNotification) {
+                return new Triple<>(result.name, result.address, result.website);
+            }else {
+                return new Triple<>(result.name, result.phoneNumber, result.website);
+
+            }
         } else {
             throw new IOException("Request failed with code: " + response.code());
         }
