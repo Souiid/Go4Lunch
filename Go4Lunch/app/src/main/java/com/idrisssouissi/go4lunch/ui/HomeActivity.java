@@ -55,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         NotificationScheduler.scheduleNotification(this);
+        //Test
 
 
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
