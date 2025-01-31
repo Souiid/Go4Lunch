@@ -55,18 +55,47 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
     public Triple<String, String, String> getWebsiteAndPhoneNumber(String restaurantId) throws IOException {
-       return restaurantRepository.getRestaurantContact(restaurantId);
+        return restaurantRepository.getRestaurantContact(restaurantId);
     }
 
-    public Boolean getIsRestaurantSelected(String restaurantId) {
-        User currentUser = getCurrentUser();
-        return (currentUser.getSelectedRestaurant().get("id").equals(restaurantId));
-    }
 
     public Boolean getIsRestaurantLiked(String restaurantId) {
         User currentUser = getCurrentUser();
         return (currentUser.getRestaurantLikeIDs().contains(restaurantId));
     }
+
+    public boolean getIsRestaurantSelected(String restaurantId) {
+        User currentUser = getCurrentUser();
+        boolean isRestaurantSelected = currentUser.getSelectedRestaurant().get("id").equals(restaurantId);
+        boolean isRestaurantValid = false;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime limitTime = LocalTime.of(15, 0);
+
+        if (isRestaurantSelected) {
+            Timestamp timestamp = (Timestamp) currentUser.getSelectedRestaurant().get("date");
+            if (timestamp != null) {
+                LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+
+                LocalDate selectionDate = selectionDateTime.toLocalDate();
+                LocalTime selectionTime = selectionDateTime.toLocalTime();
+
+                if (selectionDate.isEqual(now.toLocalDate())) {
+                    if (selectionTime.isBefore(limitTime)) {
+                        isRestaurantValid = true;
+                    }
+                } else if (selectionDate.isEqual(now.toLocalDate().minusDays(1))) {
+                    if (selectionTime.isAfter(limitTime)) {
+                        isRestaurantValid = true;
+                    }
+                }
+            }
+        }
+        return isRestaurantSelected && isRestaurantValid;
+    }
+
 
     public List<UserItem> getUsersByRestaurantID(String restaurantId) {
         ArrayList<UserItem> usersInRestaurant = new ArrayList<>();
