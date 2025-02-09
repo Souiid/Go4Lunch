@@ -1,22 +1,18 @@
 package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.databinding.RestaurantItemBinding;
-
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -26,28 +22,31 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
     private List<Restaurant> restaurantList;
     private final OnRestaurantClickListener listener;
-    private HomeViewModel viewModel;
+    private final HomeViewModel viewModel;
+    private final Context context;
+
 
     public RestaurantAdapter(List<Restaurant> restaurantList,
                              OnRestaurantClickListener listener,
-                             HomeViewModel viewModel) {
+                             HomeViewModel viewModel, Context context) {
         this.restaurantList = new ArrayList<>(restaurantList);
         this.listener = listener;
         this.viewModel = viewModel;
+        this.context = context;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateRestaurants(List<Restaurant> updatedRestaurants) {
-        Log.d("RestaurantAdapter", "Updated restaurants: " + updatedRestaurants.size());
         this.restaurantList = new ArrayList<>(updatedRestaurants);
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public RestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RestaurantItemBinding binding = RestaurantItemBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
-        return new RestaurantViewHolder(binding);
+        return new RestaurantViewHolder(binding, context);
     }
 
     @Override
@@ -64,18 +63,19 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     }
 
     public static class RestaurantViewHolder extends RecyclerView.ViewHolder {
-        private RestaurantItemBinding binding;
+        private final RestaurantItemBinding binding;
+        private final Context context;
 
-        public RestaurantViewHolder(RestaurantItemBinding binding) {
+        public RestaurantViewHolder(RestaurantItemBinding binding, Context context) {
             super(binding.getRoot());
             this.binding = binding;
+            this.context = context;
         }
 
         @SuppressLint("SetTextI18n")
         public void bind(Restaurant restaurant, HomeViewModel viewModel) {
             binding.restaurantNameTV.setText(restaurant.getName());
             binding.restaurantInfoTV.setText(restaurant.getAddress());
-            Log.d("ttt", "Number of users in adapter: " + restaurant.getNumberOfUsers());
 
             if (restaurant.getDistance().isPresent()) {
                 Float distance = restaurant.getDistance().get();
@@ -84,24 +84,24 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             LocalTime openLocalTime = restaurant.getOpenHours()[0];
             LocalTime closeLocalTime = restaurant.getOpenHours()[1];
 
-            LocalTime now = LocalTime.now(); // Heure actuelle
+            LocalTime now = LocalTime.now();
 
-            String textToDisplay = "";
+            String textToDisplay;
 
             if (openLocalTime == null || closeLocalTime == null) {
-                textToDisplay = "Unknown hourlies";
+                textToDisplay = context.getString(R.string.unknow_hourlies);
             } else if (openLocalTime.equals(LocalTime.of(0, 0)) && closeLocalTime.equals(LocalTime.of(0, 0))) {
-                textToDisplay = "Closed today";
+                textToDisplay = context.getString(R.string.closed_today);
             } else if (now.isBefore(openLocalTime)) {
-                textToDisplay = "Closed now, open at " + openLocalTime.toString();
+                textToDisplay = context.getString(R.string.closed_now_open_at);
             } else if (now.isAfter(closeLocalTime)) {
-                textToDisplay = "Closed now";
+                textToDisplay = context.getString(R.string.closed_now);
             } else {
                 Duration timeUntilClose = Duration.between(now, closeLocalTime);
                 if (timeUntilClose.toMinutes() <= 30) {
-                    textToDisplay = "Closing soon, close at " + closeLocalTime.toString();
+                    textToDisplay = context.getString(R.string.closing_soon, closeLocalTime.toString());
                 } else {
-                    textToDisplay = "Open until: " + closeLocalTime.toString();
+                    textToDisplay = context.getString(R.string.open_until, closeLocalTime.toString());;
                 }
             }
 
@@ -115,7 +115,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             }
 
             int stars = 0;
-            Integer note = restaurant.getNote().intValue();
+            int note = restaurant.getNote().intValue();
 
             if (note >= 2) {
                 stars = 1;

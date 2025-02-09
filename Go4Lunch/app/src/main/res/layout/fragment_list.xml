@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="@string/any_restaurand_find"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        tools:ignore="VisualLintOverlap" />
 
     <ProgressBar
         android:id="@+id/progressBar"

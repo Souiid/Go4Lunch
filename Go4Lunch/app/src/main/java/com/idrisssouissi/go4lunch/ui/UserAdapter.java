@@ -2,27 +2,23 @@ package com.idrisssouissi.go4lunch.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.UserItemBinding;
-
 import java.util.List;
 import java.util.Objects;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
-    private List<UserItem> userList;
-    private Context context;
-    private Boolean isDetails;
+    private final List<UserItem> userList;
+    private final Context context;
+    private final Boolean isDetails;
 
     public UserAdapter(List<UserItem> userList, Context context, Boolean isDetails) {
         this.userList = userList;
@@ -31,7 +27,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
     @NonNull
     @Override
-    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         UserItemBinding binding = UserItemBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
         return new UserViewHolder(binding, context, isDetails);
@@ -49,9 +45,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
-        private UserItemBinding binding;
-        private Context context;
-        private Boolean isDetails;
+        private final UserItemBinding binding;
+        private final Context context;
+        private final Boolean isDetails;
 
         public UserViewHolder(UserItemBinding binding, Context context, Boolean isDetails) {
             super(binding.getRoot());
@@ -63,9 +59,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         @SuppressLint("SetTextI18n")
         public void bind(UserItem user) {
             if (!isDetails) {
-                if (Objects.equals(user.getId(), "WlftA4cIMgSQ4Al0RqXnwIqJwQr2")) {
-                    Log.d("ttt", "Idriss souissi mange à  " + user.getRestaurantName());
-                }
                 if (!Objects.equals(user.getRestaurantName(), "")) {
                     binding.userInfoTV.setText(user.getName() + " " + context.getString(R.string.lunch_to, user.getRestaurantName()));
                 }else {

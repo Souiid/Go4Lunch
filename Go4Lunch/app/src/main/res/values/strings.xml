@@ -40,6 +40,13 @@
     <string name="no_one">No one eats lunch here</string>
     <string name="time_to_lunch">It\'s time to lunch!</string>
     <string name="dont_forget_to">Don\'t forget, today, you lunch at %1$s with %2$s. Address: %3$s </string>
+    <string name="unknow_hourlies">Unknown hourlies</string>
+    <string name="closed_today">Closed today</string>
+    <string name="closed_now_open_at">Closed now, open at %s</string>
+    <string name="closed_now">Closed now</string>
+    <string name="closing_soon">Closing soon, close at %s</string>
+    <string name="open_until">Open until %s</string>
+
     <!-- Template to build UI -->
     <string name="restaurant_name_template" translatable="false">Le Zinc</string>
     <string name="distance_template" translatable="false">120m</string>

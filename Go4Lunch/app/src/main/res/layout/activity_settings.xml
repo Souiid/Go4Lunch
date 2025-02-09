@@ -11,13 +11,14 @@
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:contentDescription="@string/back"
-        android:src="@drawable/ic_back"
-        android:elevation="3dp"
+        android:layout_marginTop="16dp"
         android:background="@color/fui_transparent"
-        app:tint="@color/black" />
+        android:contentDescription="@string/back"
+        android:elevation="3dp"
+        android:src="@drawable/ic_back"
+        app:tint="@color/black"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
         android:layout_below="@id/backButton"
@@ -44,7 +45,7 @@
             android:textColor="#0F37F4"
             android:text="@string/access_to_settings"
             android:backgroundTint="#FFFFFF"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            tools:ignore="UseSwitchCompatOrMaterialXml,VisualLintButtonSize" />
 
     </LinearLayout>
 

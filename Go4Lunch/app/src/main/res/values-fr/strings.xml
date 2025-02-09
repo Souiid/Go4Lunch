@@ -37,4 +37,10 @@
     <string name="no_one">Personne ne déjeune ici</string>
     <string name="time_to_lunch">À table !</string>
     <string name="dont_forget_to">N\'oubliez pas, aujourd\'hui, vous déjeunez à %1$s avec %2$s. Adresse: %3$s</string>
+    <string name="unknow_hourlies">Horaires incnnus</string>
+    <string name="closed_today">Fermé aujourd\'hui</string>
+    <string name="closed_now_open_at">Actuemllement fermé, ouvre à %s</string>
+    <string name="closed_now">Fermé maintenant</string>
+    <string name="closing_soon">Ferme bientôt, ferme à %s</string>
+    <string name="open_until">Ouvert jusqu\'à  %s</string>
 </resources>

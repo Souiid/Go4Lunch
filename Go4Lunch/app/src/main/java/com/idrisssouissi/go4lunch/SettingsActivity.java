@@ -2,14 +2,11 @@ package com.idrisssouissi.go4lunch;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.idrisssouissi.go4lunch.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -32,24 +29,16 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void clickOnNotification() {
-        binding.notificationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setAction(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getPackageName());
-                startActivity(intent);
-            }
+        binding.notificationButton.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getPackageName());
+            startActivity(intent);
         });
     }
 
 
     private void clickOnBackButton() {
-        binding.backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        binding.backButton.setOnClickListener(v -> finish());
     }
 }

@@ -1,9 +1,5 @@
 package com.idrisssouissi.go4lunch.data;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 public class UserItem {
 
     String id;

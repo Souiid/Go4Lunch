@@ -4,13 +4,10 @@ package com.idrisssouissi.go4lunch.ui;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
@@ -18,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,10 +24,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.idrisssouissi.go4lunch.BuildConfig;
-import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
@@ -52,19 +46,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SearchV
     HomeViewModel viewModel;
     LiveData<List<Restaurant>> restaurantsLiveData;
 
-    public static MapFragment newInstance() {
-        return new MapFragment();
-    }
-
     private OnRestaurantSelectedListener callback;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            callback = (OnRestaurantSelectedListener) context;  // Assurez-vous que l'Activity implémente l'interface
+            callback = (OnRestaurantSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
+            throw new ClassCastException(context
                     + " must implement OnRestaurantSelectedListener");
         }
     }
@@ -72,6 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SearchV
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        assert getActivity() != null;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
     }
@@ -81,10 +72,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SearchV
                              Bundle savedInstanceState) {
 
         binding = FragmentMapBinding.inflate(getLayoutInflater(), container, false);
+        assert getActivity() != null;
         Places.initialize(getActivity().getApplicationContext(), API_KEY);
 
-
-        // Initialisation du fragment de la carte
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -119,7 +109,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SearchV
                     mMap.setOnMarkerClickListener(marker -> {
                         String restaurantID = marker.getSnippet();
                         if (restaurantID != null) {
-                            callback.onRestaurantSelected(restaurantID);  // Demander à `HomeActivity` de gérer cela
+                            callback.onRestaurantSelected(restaurantID);
                         }
                         return false;
                     });
@@ -136,74 +126,59 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SearchV
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        // Permettre le zoom
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-
-        // Vérifiez les permissions et obtenez la localisation
+        assert getActivity() != null;
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Demander les permissions si elles ne sont pas accordées
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             return;
         }
 
-        // Activer la localisation sur la carte
         mMap.setMyLocationEnabled(true);
 
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                .addOnSuccessListener(getActivity(), location -> {
+                    if (location != null) {
+                        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
 
-                            new Thread(() -> {
-                                try {
-                                    fetchNearbyRestaurants(latitude, longitude);
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                viewModel.setLastLocation(latitude, longitude);
-                            }).start();
+                        new Thread(() -> {
+                            try {
+                                fetchNearbyRestaurants(latitude, longitude);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            viewModel.setLastLocation(latitude, longitude);
+                        }).start();
 
-                        }
                     }
                 });
 
         binding.searchButton.setVisibility(View.INVISIBLE);
 
-        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-            @Override
-            public void onCameraMove() {
-                binding.searchButton.setVisibility(View.VISIBLE);
-            }
-        });
+        mMap.setOnCameraMoveListener(() -> binding.searchButton.setVisibility(View.VISIBLE));
     }
 
     void clickOnSearchButton() {
-        binding.searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mMap != null) {
-                    LatLng centerOfMap = mMap.getCameraPosition().target;
-                    double centerLatitude = centerOfMap.latitude;
-                    double centerLongitude = centerOfMap.longitude;
-                    new Thread(() -> {
-                        try {
+        binding.searchButton.setOnClickListener(v -> {
+            if (mMap != null) {
+                LatLng centerOfMap = mMap.getCameraPosition().target;
+                double centerLatitude = centerOfMap.latitude;
+                double centerLongitude = centerOfMap.longitude;
+                new Thread(() -> {
+                    try {
 
-                            fetchNearbyRestaurants(centerLatitude, centerLongitude);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        v.setVisibility(View.INVISIBLE);
-                    }).start();
-                }
+                        fetchNearbyRestaurants(centerLatitude, centerLongitude);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    v.setVisibility(View.INVISIBLE);
+                }).start();
             }
         });
     }

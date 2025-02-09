@@ -1,27 +1,15 @@
 package com.idrisssouissi.go4lunch.data;
 
-import android.util.Log;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import javax.inject.Inject;
-
 import kotlin.Triple;
 
 public class RestaurantRepository {
 
     private List<Restaurant> restaurants = new ArrayList<>();
-    private RestaurantApiService restaurantApiService;
-
+    private final RestaurantApiService restaurantApiService;
 
     @Inject
     public RestaurantRepository(RestaurantApiService restaurantApiService) {

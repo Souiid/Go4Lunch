@@ -6,11 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -20,16 +17,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.bumptech.glide.Glide;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
-import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.ActivityRestaurantDetailsBinding;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +36,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     ActivityRestaurantDetailsBinding binding;
     String restaurantID;
     private RestaurantDetailsViewModel viewModel;
-    private Restaurant restaurant;
     FirebaseApiService firebaseApiService = new FirebaseApiService();
     Boolean isRestaurantSelected = false;
     Boolean isRestaurantLiked = false;
@@ -62,7 +55,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         RestaurantDetailsViewModel.Factory factory = Go4Lunch.getAppComponent().provideRestaurantDetailsViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(RestaurantDetailsViewModel.class);
         restaurantID = getIntent().getStringExtra("restaurantID");
-        restaurant = viewModel.getRestaurant(restaurantID);
+        Restaurant restaurant = viewModel.getRestaurant(restaurantID);
 
         new Thread(() -> {
             try {

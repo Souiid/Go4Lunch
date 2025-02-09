@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class LocationRepository {
 
 
-    private MutableLiveData<LatLng> lastLocation = new MutableLiveData<>();
+    private final MutableLiveData<LatLng> lastLocation = new MutableLiveData<>();
 
     public void setLastLocation(LatLng location) {
         lastLocation.postValue(location);

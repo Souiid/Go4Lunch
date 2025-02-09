@@ -1,21 +1,17 @@
 package com.idrisssouissi.go4lunch.data;
 
-import android.util.Log;
-
 import com.idrisssouissi.go4lunch.BuildConfig;
-
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import kotlin.Triple;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -32,18 +28,15 @@ public class RestaurantApiService {
     public List<Restaurant> fetchNearbyRestaurants(double latitude, double longitude) throws IOException {
         String location = latitude + "," + longitude;
 
-        // Appel API Nearby Search pour récupérer les restaurants
         Call<NearbySearchResponse> call = restaurantApi.fetchNearbyRestaurants(location, 500, "restaurant", API_KEY);
         Response<NearbySearchResponse> response = call.execute();
 
         if (response.isSuccessful() && response.body() != null) {
-            // Mapper les résultats de Nearby Search en objets Restaurant
             List<Restaurant> restaurants = mapResultsToRestaurants(response.body().results);
 
-            // Pour chaque restaurant, récupérer les horaires via Place Details
             for (Restaurant restaurant : restaurants) {
                 LocalTime[] openingHours = fetchOpeningHoursForRestaurant(restaurant.getId());
-                restaurant.setOpenHours(openingHours); // Mettre à jour les horaires
+                restaurant.setOpenHours(openingHours);
             }
 
             return restaurants;
@@ -53,12 +46,9 @@ public class RestaurantApiService {
     }
 
     public LocalTime[] fetchOpeningHoursForRestaurant(String placeId) throws IOException {
-        // Effectue un appel à l'API Place Details
-        DayOfWeek today = LocalDate.now().getDayOfWeek();
-        LocalTime currentTime = LocalTime.now();
         Call<RestaurantDetailsResponse> call = restaurantApi.getRestaurantDetails(
                 placeId,
-                "opening_hours", // Spécifie qu'on veut récupérer uniquement les horaires d'ouverture
+                "opening_hours",
                 API_KEY
         );
 
@@ -68,7 +58,6 @@ public class RestaurantApiService {
             RestaurantDetailsResponse.RestaurantDetail result = response.body().result;
 
             if (result.openingHours != null && result.openingHours.weekdayText != null) {
-                Log.d("ggg", "Opening hours" + result.openingHours.weekdayText);
                 String hourlyText = String.valueOf(getDayFromWeekdayText(result.openingHours.weekdayText));
                 String hoursFromDay = getHoursFromTheDay(hourlyText);
                 return extractHours(hoursFromDay);
@@ -79,22 +68,15 @@ public class RestaurantApiService {
     }
 
     private LocalTime parseToLocalTime(String timeStr) {
-        // Définir les formats
         DateTimeFormatter formatterWithAMPM = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
         DateTimeFormatter formatter24h = DateTimeFormatter.ofPattern("H:mm", Locale.ENGLISH);
 
-        // Log avant transformation
-        Log.d("www", "Original timeStr: " + timeStr);
-
-        // Vérifier si la chaîne contient AM ou PM
         if (timeStr.toUpperCase().contains("AM") || timeStr.toUpperCase().contains("PM")) {
             String cleanedTimeStr = timeStr.replace("\u202F", " ").toUpperCase();
-            LocalTime parsedTime = LocalTime.parse(cleanedTimeStr, formatterWithAMPM);
-            return parsedTime;
+            return LocalTime.parse(cleanedTimeStr, formatterWithAMPM);
         } else {
             String cleanedTimeStr = timeStr.replace("\u202F", " ");
-            LocalTime parsedTime = LocalTime.parse(cleanedTimeStr, formatter24h);
-            return parsedTime;
+            return LocalTime.parse(cleanedTimeStr, formatter24h);
         }
     }
 
@@ -114,12 +96,10 @@ public class RestaurantApiService {
                 hourlyTextModify = hourlyTextModify.substring(0, commaIndex).trim();
             }
         }
-        Log.d("aaa", "HourlyTextModify: " + hourlyTextModify);
         return hourlyTextModify;
     }
 
     private LocalTime[] extractHours(String input) {
-        Log.d("aaa", "Input: " + input);
         if (input.isEmpty()) {
             return new LocalTime[]{null, null};
         }
@@ -132,15 +112,13 @@ public class RestaurantApiService {
         Matcher matcher = pattern.matcher(input);
 
         if (matcher.find()) {
-            String heure1 = matcher.group(1).trim();
-            String heure2 = matcher.group(2).trim();
-            Log.d("aaa", "SimpleHours:" + heure1 + "-" + heure2);
+            String heure1 = Objects.requireNonNull(matcher.group(1)).trim();
+            String heure2 = Objects.requireNonNull(matcher.group(2)).trim();
 
-            // Convertir en LocalTime
             return new LocalTime[]{parseToLocalTime(heure1), parseToLocalTime(heure2)};
         }
 
-        return new LocalTime[]{null, null}; // Retourne null si le format n'est pas reconnu
+        return new LocalTime[]{null, null};
     }
 
     private Optional<String> getDayFromWeekdayText(List<String> weekdayText) {
@@ -158,7 +136,6 @@ public class RestaurantApiService {
         for (NearbySearchResponse.RestaurantResult result : results) {
             String photoUrl = null;
 
-            // Si une photo est disponible, construire l'URL
             if (result.photos != null && !result.photos.isEmpty()) {
                 photoUrl = getPhotoUrl(result.photos.get(0).photoReference);
             }
@@ -172,13 +149,13 @@ public class RestaurantApiService {
                     result.address,
                     result.geometry.location.lat,
                     result.geometry.location.lng,
-                    null, // Type (non présent dans l'API)
-                    photoUrl, // URL de la photo
-                    openHours, // Horaires d'ouverture (peut être ajusté)
-                    Optional.empty(), // Téléphone
-                    Optional.empty(), // Site Web
-                    Optional.empty(), // Note
-                    Optional.empty()  // Nombre d'utilisateurs
+                    null,
+                    photoUrl,
+                    openHours,
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty()
             );
             restaurants.add(restaurant);
         }
@@ -192,15 +169,11 @@ public class RestaurantApiService {
                 API_KEY
         );
 
-        // Appel synchrone
         Response<RestaurantDetailsResponse> response = call.execute();
 
 
         if (response.isSuccessful() && response.body() != null) {
             RestaurantDetailsResponse.RestaurantDetail result = response.body().result;
-            Log.d("ppp", "RestaurantDetails: " + result.address);
-
-            // Mapper les détails dans un objet Restaurant`
             if (isForNotification) {
                 return new Triple<>(result.name, result.address, result.website);
             }else {

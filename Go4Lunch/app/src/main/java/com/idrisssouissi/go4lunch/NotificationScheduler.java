@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 public class NotificationScheduler {
 
-    private static final String WORK_ID = "notification_work";
-
     public static void scheduleNotification(Context context) {
        Calendar now = Calendar.getInstance();
        Calendar targetTime = Calendar.getInstance();

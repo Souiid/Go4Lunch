@@ -7,11 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,44 +20,29 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.idrisssouissi.go4lunch.Go4Lunch;
-import com.idrisssouissi.go4lunch.NotificationScheduler;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.SettingsActivity;
-import com.idrisssouissi.go4lunch.data.RestaurantApiService;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.databinding.ActivityHomeBinding;
 import com.mikhaellopez.circularimageview.CircularImageView;
-
-import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-
 import jp.wasabeef.glide.transformations.BlurTransformation;
-import kotlin.Triple;
 
 public class HomeActivity extends AppCompatActivity implements OnRestaurantSelectedListener {
 
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle toggle;
     ActivityHomeBinding binding;
     private HomeViewModel viewModel;
     private SharedPreferences sharedPreferences;
-
-
-    //TODO: Recharger carte premier lancement, demander notif pop up
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +53,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         sharedPreferences = getApplication().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
-        Log.d("ppp", "Activity ViewModel instance: " + viewModel);
         Go4Lunch.getAppComponent().inject(this);
 
         viewModel.getUserConnectionStatus().observe(this, isConnected -> {
@@ -91,14 +73,13 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                     new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
         }
 
-        // Configure the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -177,7 +158,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
                             .replace(R.id.fragment_container, selectedFragment)
                             .commit();
 
-                    // Ajoutez cette ligne pour forcer la mise à jour du menu
                     invalidateOptionsMenu();
                 }
                 return true;
@@ -187,26 +167,19 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
             binding.bottomNavigation.setSelectedItemId(R.id.navigation_map);
         }
 
-        getSupportFragmentManager().addOnBackStackChangedListener(() -> invalidateOptionsMenu());
+        getSupportFragmentManager().addOnBackStackChangedListener(this::invalidateOptionsMenu);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission accordée, tu peux envoyer des notifications
-            } else {
-                // Permission refusée, afficher un message ou désactiver la fonctionnalité
-            }
-        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
 
-        // Handle the visibility of the sort item
         MenuItem sortItem = menu.findItem(R.id.action_sort);
         MenuItem searchViewItem = menu.findItem(R.id.search_item);
 
@@ -215,24 +188,22 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
 
         searchViewItem.setVisible(!(currentFragment instanceof MatesFragment));
 
-        // Setup the SearchView
         MenuItem searchItem = menu.findItem(R.id.search_item);
         SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
 
+        assert searchView != null;
         searchView.setQueryHint(getString(R.string.search));
         searchView.setIconifiedByDefault(true);
 
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // Optional: Handle the expand action
+            public boolean onMenuItemActionExpand(@NonNull MenuItem item) {
                 return true;
             }
 
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
+            public boolean onMenuItemActionCollapse(@NonNull MenuItem item) {
                 viewModel.initRestaurants();
-                //    Toast.makeText(HomeActivity.this, "Search view closed", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -269,7 +240,7 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
     }
 
     @Override
-    public void onAttachFragment(Fragment fragment) {
+    public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
         invalidateOptionsMenu();
     }
@@ -293,7 +264,6 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
-        // Définir l'action à effectuer lorsqu'un élément du popup menu est sélectionné
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @SuppressLint("NonConstantResourceId")
             @Override

@@ -4,25 +4,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.RestaurantApiService;
-
 import java.io.IOException;
 import java.util.concurrent.Executors;
-
 import kotlin.Triple;
 
 public class NotificationWorker extends Worker {
-
-    RestaurantApiService restaurantApiService;
 
     public NotificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -39,21 +31,17 @@ public class NotificationWorker extends Worker {
          return Result.success();
      }
 
-     new FirebaseApiService().getUserNamesInRestaurant(restaurantID, names -> {
-         Log.d("ppp", "UserNames: " + names);
-         Executors.newSingleThreadExecutor().execute(() -> {
-             try {
-                 Triple<String, String, String> restaurantInfo = new RestaurantApiService().getRestaurantDetailsFromId(restaurantID, true);
-                 String restaurantName = restaurantInfo.component1();
-                 String address = restaurantInfo.component2();
-                 String joinedNames = String.join(", ", names);
-                 showNotification(getApplicationContext().getString(R.string.time_to_lunch), getApplicationContext().getString(R.string.dont_forget_to, restaurantName, joinedNames, address));
-                Log.d("ppp", "Notification sent: " + getApplicationContext().getString(R.string.time_to_lunch) + getApplicationContext().getString(R.string.dont_forget_to, restaurantName, joinedNames, address));
-             } catch (IOException e) {
-                 throw new RuntimeException(e);
-             }
-         });
-     });
+     new FirebaseApiService().getUserNamesInRestaurant(restaurantID, names -> Executors.newSingleThreadExecutor().execute(() -> {
+         try {
+             Triple<String, String, String> restaurantInfo = new RestaurantApiService().getRestaurantDetailsFromId(restaurantID, true);
+             String restaurantName = restaurantInfo.component1();
+             String address = restaurantInfo.component2();
+             String joinedNames = String.join(", ", names);
+             showNotification(getApplicationContext().getString(R.string.time_to_lunch), getApplicationContext().getString(R.string.dont_forget_to, restaurantName, joinedNames, address));
+         } catch (IOException e) {
+             throw new RuntimeException(e);
+         }
+     }));
 
      return Result.success();
     }

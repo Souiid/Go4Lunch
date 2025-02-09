@@ -1,9 +1,6 @@
 package com.idrisssouissi.go4lunch.data;
 
-import android.graphics.Bitmap;
-
 import java.time.LocalTime;
-import java.util.Locale;
 import java.util.Optional;
 
 public class Restaurant {
@@ -65,10 +62,6 @@ public class Restaurant {
         return longitude;
     }
 
-    public Optional<String> getType() {
-        return type;
-    }
-
     public void setDistance(Float distance) {
         this.distance = Optional.ofNullable(distance);
     }
@@ -104,26 +97,5 @@ public class Restaurant {
     public void setOpenHours(LocalTime[] openHours) {
         this.openHours = openHours;
     }
-
-    public Optional<String> getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public Optional<String> getWebsite() {
-        return website;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = Optional.ofNullable(phoneNumber);
-    }
-
-    public void setWebsite(String website) {
-        this.website = Optional.ofNullable(website);
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
 
 }

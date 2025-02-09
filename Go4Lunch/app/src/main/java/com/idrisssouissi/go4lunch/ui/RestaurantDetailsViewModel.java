@@ -1,18 +1,14 @@
 package com.idrisssouissi.go4lunch.ui;
 
-import android.util.Log;
-import android.view.View;
-
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,11 +17,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import javax.inject.Inject;
-
 import kotlin.Triple;
 
 public class RestaurantDetailsViewModel extends ViewModel {
@@ -46,6 +38,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     public User getCurrentUser() {
         List<User> userList = userRepository.getUsersLiveData().getValue();
         String currentUserID = userRepository.getCurrentUID();
+        assert userList != null;
         for (User user : userList) {
             if (user.getId().equals(currentUserID)) {
                 return user;
@@ -66,7 +59,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public boolean getIsRestaurantSelected(String restaurantId) {
         User currentUser = getCurrentUser();
-        boolean isRestaurantSelected = currentUser.getSelectedRestaurant().get("id").equals(restaurantId);
+        boolean isRestaurantSelected = Objects.equals(currentUser.getSelectedRestaurant().get("id"), restaurantId);
         boolean isRestaurantValid = false;
 
         LocalDateTime now = LocalDateTime.now();
@@ -104,23 +97,20 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         for (User user : Objects.requireNonNull(userRepository.getUsersLiveData().getValue())) {
             if (Objects.equals(user.getSelectedRestaurant().get("id"), restaurantId)) {
-                // Récupérer la date/heure de sélection comme Firebase Timestamp
                 Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
                 if (timestamp != null) {
                     LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
                             .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime(); // Conversion du timestamp
+                            .toLocalDateTime();
 
-                    LocalDate selectionDate = selectionDateTime.toLocalDate(); // Date de sélection
-                    LocalTime selectionTime = selectionDateTime.toLocalTime(); // Heure de sélection
+                    LocalDate selectionDate = selectionDateTime.toLocalDate();
+                    LocalTime selectionTime = selectionDateTime.toLocalTime();
 
                     if (selectionDate.isEqual(now.toLocalDate())) {
-                        // Aujourd'hui
                         if (selectionTime.isBefore(limitTime)) {
                             usersInRestaurant.add(new UserItem(user.getId(), user.getName(), "", user.getPhotoUrl()));
                         }
                     } else if (selectionDate.isEqual(now.toLocalDate().minusDays(1))) {
-                        // Hier
                         if (selectionTime.isAfter(limitTime)) {
                             usersInRestaurant.add(new UserItem(user.getId(), user.getName(), "", user.getPhotoUrl()));
                         }
@@ -136,11 +126,12 @@ public class RestaurantDetailsViewModel extends ViewModel {
         private final UserRepository userRepository;
 
         @Inject
-        public Factory(RestaurantRepository restaurantRepository, UserRepository userRepository) {  // Correction ici
+        public Factory(RestaurantRepository restaurantRepository, UserRepository userRepository) {
             this.restaurantRepository = restaurantRepository;
-            this.userRepository = userRepository;  // Correction ici
+            this.userRepository = userRepository;
         }
 
+        @NonNull
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {

@@ -24,9 +24,6 @@ public class NearbySearchResponse {
         @SerializedName("photos")
         public List<Photo> photos;
 
-        @SerializedName("opening_hours")
-        public OpeningHours openingHours;
-
         public static class Geometry {
             @SerializedName("location")
             public Location location;
@@ -43,11 +40,6 @@ public class NearbySearchResponse {
         public static class Photo {
             @SerializedName("photo_reference")
             public String photoReference;
-        }
-
-        public static class OpeningHours {
-            @SerializedName("open_now")
-            public Boolean openNow;
         }
     }
 }

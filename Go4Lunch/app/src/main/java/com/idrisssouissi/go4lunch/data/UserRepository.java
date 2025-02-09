@@ -1,20 +1,17 @@
 package com.idrisssouissi.go4lunch.data;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 public class UserRepository {
 
-    private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
-    private FirebaseApiService firebaseApiService = new FirebaseApiService();
+    private final MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
+    private final FirebaseApiService firebaseApiService;
     private final FirebaseAuth auth;
 
     String currentUID;
@@ -25,11 +22,9 @@ public class UserRepository {
         this.auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser == null) {
-            Log.e("UserRepository", "Aucun utilisateur connecté.");
-            // Gérez ce cas (soit en lançant une exception ou en traitant le cas d'utilisateur déconnecté)
             return;
         }
-        currentUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     }
 
     public String getCurrentUID() {
@@ -37,8 +32,7 @@ public class UserRepository {
         if (currentUser != null) {
             return currentUser.getUid();
         } else {
-            Log.e("UserRepository", "Utilisateur non connecté lors de l'accès à l'UID.");
-            return null; // ou lancez une exception, selon la logique de l'application
+            return null;
         }
     }
 
@@ -47,8 +41,6 @@ public class UserRepository {
     }
 
     public void getAllUsers() {
-        firebaseApiService.getAllUsers(users -> {
-            usersLiveData.postValue(users);
-        });
+        firebaseApiService.getAllUsers(usersLiveData::postValue);
     }
 }
