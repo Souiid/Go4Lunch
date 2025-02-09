@@ -47,9 +47,8 @@ public class NotificationWorker extends Worker {
                  String restaurantName = restaurantInfo.component1();
                  String address = restaurantInfo.component2();
                  String joinedNames = String.join(", ", names);
-
-
-                showNotification(getApplicationContext().getString(R.string.time_to_lunch), getApplicationContext().getString(R.string.dont_forget_to, restaurantName, joinedNames, address));
+                 showNotification(getApplicationContext().getString(R.string.time_to_lunch), getApplicationContext().getString(R.string.dont_forget_to, restaurantName, joinedNames, address));
+                Log.d("ppp", "Notification sent: " + getApplicationContext().getString(R.string.time_to_lunch) + getApplicationContext().getString(R.string.dont_forget_to, restaurantName, joinedNames, address));
              } catch (IOException e) {
                  throw new RuntimeException(e);
              }
@@ -78,7 +77,9 @@ public class NotificationWorker extends Worker {
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_check)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
 
         notificationManager.notify(1, notification.build());
     }

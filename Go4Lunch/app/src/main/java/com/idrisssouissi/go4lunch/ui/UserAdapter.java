@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idrisssouissi.go4lunch.R;
-import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.UserItemBinding;
 
@@ -68,7 +67,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     Log.d("ttt", "Idriss souissi mange à  " + user.getRestaurantName());
                 }
                 if (!Objects.equals(user.getRestaurantName(), "")) {
-                    binding.userInfoTV.setText(user.getName() + context.getString(R.string.to) + user.getRestaurantName());
+                    binding.userInfoTV.setText(user.getName() + " " + context.getString(R.string.lunch_to, user.getRestaurantName()));
                 }else {
                     binding.userInfoTV.setText(user.getName() + " " + context.getString(R.string.has_not_yet_selected));
                 }

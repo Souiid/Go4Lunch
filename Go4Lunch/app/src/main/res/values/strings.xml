@@ -36,7 +36,7 @@
     <string name="alphabetical_order_z_a">Alphabetical order (Z > A)></string>
     <string name="sort">Sort</string>
     <string name="connexion_failed">Connexion failed</string>
-    <string name="to">to</string>
+    <string name="lunch_to">lunch to %s</string>
     <string name="no_one">No one eats lunch here</string>
     <string name="time_to_lunch">It\'s time to lunch!</string>
     <string name="dont_forget_to">Don\'t forget, today, you lunch at %1$s with %2$s. Address: %3$s </string>

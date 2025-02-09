@@ -17,6 +17,7 @@ import com.idrisssouissi.go4lunch.data.LocationRepository;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.RestaurantRepository;
 import com.idrisssouissi.go4lunch.data.User;
+import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.data.UserRepository;
 
 import java.io.IOException;
@@ -31,7 +32,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -320,6 +323,60 @@ public class HomeViewModel extends ViewModel {
             }
         }
         return null;
+    }
+
+    public List<UserItem> setUserItemList(List<User> userList, List<Restaurant> restaurantList) {
+        LocalTime limitTime = LocalTime.of(19, 0);
+        List<UserItem> newUserItemList = new ArrayList<>();
+
+        Map<String, String> restaurantMap = new HashMap<>();
+        for (Restaurant restaurant : restaurantList) {
+            restaurantMap.put(restaurant.getId(), restaurant.getName());
+        }
+
+        for (User user : userList) {
+            String restaurantName = "";
+            String selectedRestaurantID = user.getSelectedRestaurantID();
+            Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
+            LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            LocalDate selectionDate = selectionDateTime.toLocalDate();
+            LocalTime selectionTime = selectionDateTime.toLocalTime();
+            LocalDate today = LocalDate.now();
+            boolean respectsConditions = false;
+
+            if (selectionDate.isEqual(today)) {
+                if (selectionTime.isBefore(limitTime)) {
+                    respectsConditions = true;
+                }
+            } else if (selectionDate.isEqual(today.minusDays(1))) {
+                if (selectionTime.isAfter(limitTime)) {
+                    respectsConditions = true;
+                }
+            }
+
+
+            if (selectedRestaurantID != null && restaurantMap.containsKey(selectedRestaurantID) && respectsConditions) {
+                restaurantName = restaurantMap.get(selectedRestaurantID);
+                UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
+                newUserItemList.add(userItem);
+            } else if (selectedRestaurantID != null && !restaurantMap.containsKey(selectedRestaurantID) && !selectedRestaurantID.isEmpty() && respectsConditions) {
+                try {
+                    Triple<String, String, String> details = getDistantRestaurantName(selectedRestaurantID);
+                    restaurantName = details.component1();
+                    UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
+                    newUserItemList.add(userItem);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
+                newUserItemList.add(userItem);
+            }
+        }
+
+        return newUserItemList;
     }
 
 

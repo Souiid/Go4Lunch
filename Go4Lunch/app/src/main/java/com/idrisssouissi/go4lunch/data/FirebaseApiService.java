@@ -16,6 +16,7 @@ import com.google.protobuf.Any;
 import com.idrisssouissi.go4lunch.NotificationScheduler;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +95,7 @@ public class FirebaseApiService {
 
         userDocRef.update("selectedRestaurant", selectedRestaurant)
                 .addOnSuccessListener(aVoid -> {
+                    if (!isSelected) return;
                     editor.putString("restaurantID", restaurantId);
                     editor.apply();
                     NotificationScheduler.scheduleNotification(context);
@@ -130,8 +132,18 @@ public class FirebaseApiService {
     }
 
     public void getUserNamesInRestaurant(String restaurantId, Consumer<List<String>> completion) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        calendar.set(Calendar.HOUR_OF_DAY, 15);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date yesterdayAt3PM = calendar.getTime();
+
         db.collection("users")
                 .whereEqualTo("selectedRestaurant.id", restaurantId)
+                .whereGreaterThanOrEqualTo("selectedRestaurant.date", yesterdayAt3PM)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

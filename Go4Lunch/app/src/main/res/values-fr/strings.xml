@@ -33,7 +33,7 @@
     <string name="alphabetical_order_z_a">Ordre alphabétique (Z > A)</string>
     <string name="sort">Trier</string>
     <string name="connexion_failed">Connexion échouée</string>
-    <string name="to">à</string>
+    <string name="lunch_to">à %s</string>
     <string name="no_one">Personne ne déjeune ici</string>
     <string name="time_to_lunch">À table !</string>
     <string name="dont_forget_to">N\'oubliez pas, aujourd\'hui, vous déjeunez à %1$s avec %2$s. Adresse: %3$s</string>

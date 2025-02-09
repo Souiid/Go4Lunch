@@ -1,6 +1,8 @@
 package com.idrisssouissi.go4lunch.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -14,7 +16,6 @@ import android.view.ViewGroup;
 
 import com.google.firebase.Timestamp;
 import com.idrisssouissi.go4lunch.Go4Lunch;
-import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
@@ -43,12 +44,6 @@ public class MatesFragment extends Fragment {
     List<UserItem> userItemList = new ArrayList<>();
     UserAdapter adapter;
 
-    public static MatesFragment newInstance(String param1, String param2) {
-        MatesFragment fragment = new MatesFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,12 +60,7 @@ public class MatesFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Aucun autre code n'est nécessaire ici
-    }
-
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -83,9 +73,6 @@ public class MatesFragment extends Fragment {
         binding.noUsersFoundTV.setVisibility(View.INVISIBLE);
         viewModel.uiStateLiveData.observe(getViewLifecycleOwner(), pair -> {
             Executors.newSingleThreadExecutor().execute(() -> {
-                LocalDateTime now = LocalDateTime.now();
-                LocalTime limitTime = LocalTime.of(19, 0);
-
                 List<Restaurant> restaurantList = pair.first;
                 List<User> userList = pair.second;
                 if (userList == null || userList.isEmpty()) {
@@ -94,60 +81,8 @@ public class MatesFragment extends Fragment {
                     return;
                 }
                 if (restaurantList != null && userList != null) {
-                    Map<String, String> restaurantMap = new HashMap<>();
-                    for (Restaurant restaurant : restaurantList) {
-                        restaurantMap.put(restaurant.getId(), restaurant.getName());
-                    }
 
-                    List<UserItem> newUserItemList = new ArrayList<>();
-                    for (User user : userList) {
-                        String restaurantName = "";
-                        String selectedRestaurantID = user.getSelectedRestaurantID();
-                        Timestamp timestamp = (Timestamp) user.getSelectedRestaurant().get("date");
-                        LocalDateTime selectionDateTime = timestamp.toDate().toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDateTime();
-                        LocalDate selectionDate = selectionDateTime.toLocalDate();
-                        LocalTime selectionTime = selectionDateTime.toLocalTime();
-                        LocalDate today = LocalDate.now();
-                        boolean respectsConditions = false;
-
-                        if (selectionDate.isEqual(today)) {
-                            // Aujourd'hui
-                            if (selectionTime.isBefore(limitTime)) {
-                                respectsConditions = true;
-                            }
-                        } else if (selectionDate.isEqual(today.minusDays(1))) {
-                            // Hier
-                            if (selectionTime.isAfter(limitTime)) {
-                                respectsConditions = true;
-                            }
-                        }
-
-
-                        if (selectedRestaurantID != null && restaurantMap.containsKey(selectedRestaurantID) && respectsConditions) {
-                            restaurantName = restaurantMap.get(selectedRestaurantID);
-                            UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
-                            newUserItemList.add(userItem);
-                        } else if (selectedRestaurantID != null && !restaurantMap.containsKey(selectedRestaurantID) && !selectedRestaurantID.isEmpty() && respectsConditions) {
-                            try {
-                                Triple<String, String, String> details = viewModel.getDistantRestaurantName(selectedRestaurantID);
-                                restaurantName = details.component1();
-                                UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
-                                newUserItemList.add(userItem);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        } else {
-                            UserItem userItem = new UserItem(user.getId(), user.getName(), restaurantName, user.getPhotoUrl());
-                            newUserItemList.add(userItem);
-                        }
-
-                        Log.d("Debug", "User: " + user.getName());
-                        Log.d("Debug", "Selected Restaurant ID: " + selectedRestaurantID);
-                        Log.d("Debug", "Restaurant Name: " + restaurantName);
-                        Log.d("Debug", "Respects Conditions: " + respectsConditions);
-                    }
+                    List<UserItem> newUserItemList = viewModel.setUserItemList(userList, restaurantList);
 
                     requireActivity().runOnUiThread(() -> {
                         binding.recyclerView.setVisibility(View.VISIBLE);

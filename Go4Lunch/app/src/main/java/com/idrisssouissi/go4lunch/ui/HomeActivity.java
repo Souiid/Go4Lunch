@@ -57,6 +57,10 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
     private SharedPreferences sharedPreferences;
 
 
+    //TODO: Recharger carte premier lancement, demander notif pop up
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +83,12 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
         }
 
         // Configure the toolbar
@@ -178,6 +188,18 @@ public class HomeActivity extends AppCompatActivity implements OnRestaurantSelec
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> invalidateOptionsMenu());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission accordée, tu peux envoyer des notifications
+            } else {
+                // Permission refusée, afficher un message ou désactiver la fonctionnalité
+            }
+        }
     }
 
     @Override

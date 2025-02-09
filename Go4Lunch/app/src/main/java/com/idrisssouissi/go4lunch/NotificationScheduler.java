@@ -15,7 +15,7 @@ public class NotificationScheduler {
        Calendar targetTime = Calendar.getInstance();
 
        targetTime.set(Calendar.HOUR_OF_DAY, 16);
-       targetTime.set(Calendar.MINUTE, 51);
+       targetTime.set(Calendar.MINUTE, 2);
        targetTime.set(Calendar.SECOND, 0);
 
        if (now.get(Calendar.HOUR_OF_DAY) >= 17) {
