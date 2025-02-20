@@ -67,6 +67,12 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0") // Pour mocker les classes finales et statiques
+
+    // Pour les ViewModels et autres composants Android
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
 
     // FIREBASE
     implementation(platform(libs.firebase.bom))
