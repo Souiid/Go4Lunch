@@ -45,7 +45,7 @@ public class HomeViewModel extends ViewModel {
 
 
     MediatorLiveData<Pair<List<Restaurant>, List<User>>> uiStateLiveData = new MediatorLiveData<>();
-    private final MutableLiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
+    public MutableLiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
     LiveData<List<User>> usersLiveData;
 
     @Inject
@@ -240,6 +240,8 @@ public class HomeViewModel extends ViewModel {
             return String.format("%.1f km", distanceInKilometers);
         }
     }
+
+
 
     public String getIsRestaurantSelected() {
         User currentUser = getCurrentUser();
