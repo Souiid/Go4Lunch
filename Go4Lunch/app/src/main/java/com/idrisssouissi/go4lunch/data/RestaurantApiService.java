@@ -25,6 +25,10 @@ public class RestaurantApiService {
         this.restaurantApi = RetrofitClient.getInstance().create(RestaurantApi.class);
     }
 
+    public RestaurantApiService(RestaurantApi restaurantApi) {
+        this.restaurantApi = restaurantApi;
+    }
+
     public List<Restaurant> fetchNearbyRestaurants(double latitude, double longitude) throws IOException {
         String location = latitude + "," + longitude;
 

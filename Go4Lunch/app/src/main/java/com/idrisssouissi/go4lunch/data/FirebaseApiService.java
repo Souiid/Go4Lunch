@@ -25,11 +25,7 @@ import javax.inject.Inject;
 
 public class FirebaseApiService {
 
-    FirebaseFirestore db;
-
-    static {
-        FirebaseFirestore.getInstance();
-    }
+    public FirebaseFirestore db;
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
@@ -37,6 +33,11 @@ public class FirebaseApiService {
     public FirebaseApiService() {
         db = FirebaseFirestore.getInstance();
     }
+
+    public FirebaseApiService(FirebaseFirestore db) {
+        this.db = db;
+    }
+
 
     public void createUserInFirestore(FirebaseUser user, Runnable completion) {
         Map<String, Object> userData = new HashMap<>();
