@@ -27,15 +27,18 @@ public class FirebaseApiService {
 
     public FirebaseFirestore db;
 
-    FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final FirebaseAuthProvider authProvider;
+
 
     @Inject
-    public FirebaseApiService() {
+    public FirebaseApiService(FirebaseAuthProvider authProvider) {
+        this.authProvider = authProvider;
         db = FirebaseFirestore.getInstance();
     }
 
-    public FirebaseApiService(FirebaseFirestore db) {
+    public FirebaseApiService(FirebaseFirestore db, FirebaseAuthProvider authProvider) {
         this.db = db;
+        this.authProvider = authProvider;
     }
 
 
@@ -147,11 +150,11 @@ public class FirebaseApiService {
     }
 
     public void signOut() {
-        auth.signOut();
+        authProvider.signOut();
     }
 
     public Boolean isUserConnected() {
-        FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = authProvider.getCurrentUser();
         return user != null;
     }
 }

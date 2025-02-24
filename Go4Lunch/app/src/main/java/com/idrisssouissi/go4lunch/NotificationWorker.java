@@ -8,7 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
+import com.idrisssouissi.go4lunch.data.FirebaseAuthProviderImpl;
 import com.idrisssouissi.go4lunch.data.RestaurantApiService;
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -31,7 +34,10 @@ public class NotificationWorker extends Worker {
          return Result.success();
      }
 
-     new FirebaseApiService().getUserNamesInRestaurant(restaurantID, names -> Executors.newSingleThreadExecutor().execute(() -> {
+      new FirebaseApiService(
+                FirebaseFirestore.getInstance(),
+                new FirebaseAuthProviderImpl()
+        ).getUserNamesInRestaurant(restaurantID, names -> Executors.newSingleThreadExecutor().execute(() -> {
          try {
              Triple<String, String, String> restaurantInfo = new RestaurantApiService().getRestaurantDetailsFromId(restaurantID, true);
              String restaurantName = restaurantInfo.component1();

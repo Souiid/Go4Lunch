@@ -18,9 +18,11 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
+import com.idrisssouissi.go4lunch.data.FirebaseAuthProviderImpl;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.UserItem;
 import com.idrisssouissi.go4lunch.databinding.ActivityRestaurantDetailsBinding;
@@ -36,7 +38,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     ActivityRestaurantDetailsBinding binding;
     String restaurantID;
     private RestaurantDetailsViewModel viewModel;
-    FirebaseApiService firebaseApiService = new FirebaseApiService();
+    FirebaseApiService firebaseApiService = new FirebaseApiService(
+            FirebaseFirestore.getInstance(),
+            new FirebaseAuthProviderImpl()
+    );
+
     Boolean isRestaurantSelected = false;
     Boolean isRestaurantLiked = false;
 

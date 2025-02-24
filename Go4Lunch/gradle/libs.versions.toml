@@ -22,6 +22,7 @@ places = "2.6.0"
 playServicesLocation = "21.3.0"
 playServicesMaps = "19.0.0"
 retrofit = "2.9.0"
+core = "1.5.0"
 
 [libraries]
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
@@ -50,6 +51,7 @@ places = { module = "com.google.android.libraries.places:places", version.ref = 
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+core = { group = "androidx.test", name = "core", version.ref = "core" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

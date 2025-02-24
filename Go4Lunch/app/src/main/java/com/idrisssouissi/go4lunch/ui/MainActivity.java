@@ -10,8 +10,10 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.idrisssouissi.go4lunch.R;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
+import com.idrisssouissi.go4lunch.data.FirebaseAuthProviderImpl;
 import com.idrisssouissi.go4lunch.databinding.ActivityMainBinding;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +69,10 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     if (response != null && response.isNewUser()) {
-                        FirebaseApiService firebaseApiService = new FirebaseApiService();
+                        FirebaseApiService firebaseApiService = new FirebaseApiService(
+                                FirebaseFirestore.getInstance(),
+                                new FirebaseAuthProviderImpl()
+                        );
                         firebaseApiService.createUserInFirestore(user, this::startHomeActivity);
                     } else {
                         startHomeActivity();

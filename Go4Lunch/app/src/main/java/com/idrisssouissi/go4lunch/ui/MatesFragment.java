@@ -11,8 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.idrisssouissi.go4lunch.Go4Lunch;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
+import com.idrisssouissi.go4lunch.data.FirebaseAuthProviderImpl;
 import com.idrisssouissi.go4lunch.data.Restaurant;
 import com.idrisssouissi.go4lunch.data.User;
 import com.idrisssouissi.go4lunch.data.UserItem;
@@ -34,7 +37,10 @@ public class MatesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firebaseApiService = new FirebaseApiService();
+         firebaseApiService = new FirebaseApiService(
+                FirebaseFirestore.getInstance(),
+                new FirebaseAuthProviderImpl()
+        );
         HomeViewModel.Factory factory = Go4Lunch.getAppComponent().provideHometViewModelFactory();
         viewModel = new ViewModelProvider(this, factory).get(HomeViewModel.class);
     }

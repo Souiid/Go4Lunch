@@ -8,6 +8,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +65,7 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
         viewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             binding.noRestaurantFoundTV.setVisibility(View.INVISIBLE);
             binding.recyclerView.setVisibility(View.VISIBLE);
-
+            Log.d("ppp", "Restaurants changed: " + restaurants);
             if (restaurants == null || restaurants.isEmpty()) {
                 binding.noRestaurantFoundTV.setVisibility(View.VISIBLE);
                 binding.progressBar.setVisibility(View.GONE);

@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
+    testImplementation(libs.core)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
@@ -76,6 +77,14 @@ dependencies {
 
     // Pour les ViewModels et autres composants Android
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    testImplementation("org.robolectric:robolectric:4.11.1")
+
+    testImplementation("org.powermock:powermock-module-junit4:2.0.9")
+    testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
+    testImplementation("org.powermock:powermock-classloading-xstream:2.0.9")
+
+
 
 
     // FIREBASE

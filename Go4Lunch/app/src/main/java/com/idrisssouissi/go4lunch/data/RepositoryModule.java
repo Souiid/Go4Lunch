@@ -1,5 +1,7 @@
 package com.idrisssouissi.go4lunch.data;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -28,7 +30,10 @@ public class RepositoryModule {
     @Provides
     @Singleton
     FirebaseApiService provideFirebaseApiService() {
-        return new FirebaseApiService();
+        return  new FirebaseApiService(
+                FirebaseFirestore.getInstance(),
+                new FirebaseAuthProviderImpl()
+        );
     }
 
     @Provides

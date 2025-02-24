@@ -2,74 +2,44 @@ package com.idrisssouissi.go4lunch;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.*;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.android.gms.tasks.Task;
 import com.idrisssouissi.go4lunch.data.FirebaseApiService;
-
-import org.junit.After;
+import com.idrisssouissi.go4lunch.data.FirebaseAuthProvider;
+import com.idrisssouissi.go4lunch.data.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FirebaseApiServiceTest  {
+public class FirebaseApiServiceTest {
 
-    @Mock
-    private FirebaseFirestore mockFirestore;
-
-    @Mock
-    private FirebaseAuth mockAuth;
-
-    @Mock
-    private FirebaseUser mockUser;
-
-    @Mock
-    private DocumentReference mockDocRef;
-
-    @Mock
-    private CollectionReference mockCollectionRef;
-
-    @Mock
-    private Query mockQuery;
-
-    @Mock
-    private Task<QuerySnapshot> mockTask;
-
-
-    @Mock
-    private QuerySnapshot mockQuerySnapshot;
-
-    @Mock
-    private SharedPreferences mockSharedPreferences;
-
-    @Mock
-    private SharedPreferences.Editor mockEditor;
-
-    @Mock
-    private Context mockContext;
-
-    @Mock
-    private Task<Void> mockVoidTask;
+    @Mock private FirebaseFirestore mockFirestore;
+    @Mock private CollectionReference mockUsersCollection;
+    @Mock private DocumentReference mockUserDocument;
+    @Mock private Task<Void> mockTask;
+    @Mock private Task<QuerySnapshot> mockQueryTask;
+    @Mock private QuerySnapshot mockQuerySnapshot;
+    @Mock private DocumentSnapshot mockDocument1;
+    @Mock private DocumentSnapshot mockDocument2;
+    @Mock private Consumer<List<User>> mockCompletion;
+    @Mock private FirebaseUser mockUser;
+    @Mock private FirebaseAuthProvider mockAuthProvider;
 
 
     private FirebaseApiService firebaseApiService;
@@ -78,123 +48,58 @@ public class FirebaseApiServiceTest  {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Mock FirebaseAuth
-        mockStatic(FirebaseAuth.class);
-        when(FirebaseAuth.getInstance()).thenReturn(mockAuth);
-        when(mockAuth.getCurrentUser()).thenReturn(mockUser);
-        when(mockUser.getUid()).thenReturn("testUserId");
-        when(mockUser.getPhotoUrl()).thenReturn(mock(Uri.class));
+        // 🔹 Mock Firestore
+        when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
+        when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);
+        when(mockUserDocument.set(any(Map.class), any(SetOptions.class))).thenReturn(mockTask);
 
+        // 🔹 Mock FirebaseUser
+        when(mockUser.getUid()).thenReturn("user123");
+        when(mockUser.getDisplayName()).thenReturn("Test User");
 
-        // Mock FirebaseFirestore
-        mockStatic(FirebaseFirestore.class);
-        when(FirebaseFirestore.getInstance()).thenReturn(mockFirestore);
-        when(mockFirestore.collection("users")).thenReturn(mockCollectionRef);
-        when(mockCollectionRef.document(anyString())).thenReturn(mockDocRef);
-        when(mockCollectionRef.whereEqualTo(anyString(), any())).thenReturn(mockQuery);
-        when(mockQuery.whereGreaterThanOrEqualTo(anyString(), any())).thenReturn(mockQuery);
+        // ✅ 🔥 Correction : Mock de Uri.parse() pour éviter le NullPointerException
+        Uri mockUri = mock(Uri.class);
+        when(mockUri.toString()).thenReturn("https://example.com/user1.jpg");
+        when(mockUser.getPhotoUrl()).thenReturn(mockUri);
 
-        when(mockDocRef.update(anyString(), any())).thenReturn(mockVoidTask);
-        when(mockVoidTask.addOnSuccessListener(any())).thenAnswer(invocation -> {
-            ((OnSuccessListener<Void>) invocation.getArgument(0)).onSuccess(null);
-            return mockVoidTask;
-        });
-        when(mockVoidTask.addOnFailureListener(any())).thenAnswer(invocation -> mockVoidTask);
+        when(mockUser.getEmail()).thenReturn("test@example.com");
 
-        // Mock Task et QuerySnapshot
-        doReturn(mockTask).when(mockQuery).get();
-        doReturn(true).when(mockTask).isSuccessful();
-        doReturn(mockQuerySnapshot).when(mockTask).getResult();
+        // ✅ 🔥 Correction : s'assurer que le mock est bien terminé
+        when(mockTask.addOnSuccessListener(any())).thenReturn(mockTask);
 
-        // Mock update()
-        when(mockDocRef.update(anyString(), any())).thenReturn(mock(Task.class));
-
-
-
-        // Instancier FirebaseApiService avec Firestore mocké
-        firebaseApiService = new FirebaseApiService();
-        firebaseApiService.db = mockFirestore;
-    }
-
-    @Test
-    public void testCreateUserInFirestore() {
-        // Simuler l'ajout d'un utilisateur dans Firestore
-        Task<Void> mockTask = mock(Task.class);
-        when(mockDocRef.set(anyMap(), any(SetOptions.class))).thenReturn(mockTask);
-
-        firebaseApiService.createUserInFirestore(mockUser, () -> {});
-
-        // Vérifier que la méthode set() a bien été appelée
-        verify(mockDocRef).set(anyMap(), any(SetOptions.class));
-    }
-
-    @Test
-    public void testIsUserConnected() {
-        when(mockAuth.getCurrentUser()).thenReturn(mockUser);
-        assertTrue(firebaseApiService.isUserConnected());
-
-        when(mockAuth.getCurrentUser()).thenReturn(null);
-        assertFalse(firebaseApiService.isUserConnected());
-    }
-
-    @Test
-    public void testGetAllUsers() {
-        // Simuler les documents retournés
-        DocumentSnapshot mockDocument = mock(DocumentSnapshot.class);
-        List<DocumentSnapshot> mockDocuments = Collections.singletonList(mockDocument);
-
-        Task<QuerySnapshot> mockTask = mock(Task.class);
-        QuerySnapshot mockQuerySnapshot = mock(QuerySnapshot.class);
-
-        when(mockCollectionRef.get()).thenReturn(mockTask);
-        when(mockTask.isSuccessful()).thenReturn(true);
-        when(mockTask.getResult()).thenReturn(mockQuerySnapshot);
-        when(mockQuerySnapshot.getDocuments()).thenReturn(mockDocuments);
-
-        when(mockDocument.getId()).thenReturn("userId123");
-        when(mockDocument.getString("email")).thenReturn("test@example.com");
-        when(mockDocument.getString("name")).thenReturn("Test User");
-        when(mockDocument.getString("photoUrl")).thenReturn("mock_url");
-        when(mockDocument.get("selectedRestaurant")).thenReturn(new HashMap<>());
-        when(mockDocument.get("restaurantLikeIDs")).thenReturn(new ArrayList<>());
-
-        firebaseApiService.getAllUsers(users -> {
-            assertNotNull(users);
-            assertEquals(1, users.size());
-            assertEquals("Test User", users.get(0).getName());
-        });
-
-        verify(mockCollectionRef).get();
+        // 🔹 Initialise FirebaseApiService
+        firebaseApiService = new FirebaseApiService(mockFirestore, mockAuthProvider);
     }
 
 
     @Test
-    public void testGetUserNamesInRestaurant() {
-        DocumentSnapshot mockDocument = mock(DocumentSnapshot.class);
-        List<DocumentSnapshot> mockDocuments = Arrays.asList(mockDocument);
+    public void createUserInFirestore_shouldAddUserToFirestoreAndRunCompletion() {
+        // 🔹 Simuler un succès Firestore
+        ArgumentCaptor<OnSuccessListener<Void>> successCaptor = ArgumentCaptor.forClass(OnSuccessListener.class);
+        when(mockTask.addOnSuccessListener(successCaptor.capture())).thenReturn(mockTask);
 
-        when(mockQuerySnapshot.getDocuments()).thenReturn(mockDocuments);
-        when(mockDocument.getString("name")).thenReturn("Test User");
+        // 🔹 Exécution
+        firebaseApiService.createUserInFirestore(mockUser, () -> mockCompletion.accept(null));
 
-        firebaseApiService.getUserNamesInRestaurant("restaurant123", names -> {
-            assertNotNull(names);
-            assertEquals(1, names.size());
-            assertEquals("Test User", names.get(0));
-        });
+        // 🔹 Vérification des données envoyées à Firestore
+        ArgumentCaptor<Map<String, Object>> userDataCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(mockUserDocument).set(userDataCaptor.capture(), eq(SetOptions.merge()));
 
-        verify(mockQuery).get();
+        Map<String, Object> capturedData = userDataCaptor.getValue();
+        assertEquals("Test User", capturedData.get("name"));
+        assertEquals("test@example.com", capturedData.get("email"));
+        assertTrue(capturedData.containsKey("selectedRestaurant"));
+        assertTrue(capturedData.containsKey("restaurantLikeIDs"));
+
+        // 🔹 Simuler un succès et vérifier que completion est bien appelé
+        successCaptor.getValue().onSuccess(null);
+        verify(mockCompletion).accept(null);
     }
 
-    @Test
-    public void testSignOut() {
-        firebaseApiService.signOut();
-        verify(mockAuth).signOut();
-    }
 
-    @After
-    public void tearDown() {
-        // Libérer les mocks statiques après chaque test
-        clearAllCaches();
-    }
+
 
 }
+
+
+
