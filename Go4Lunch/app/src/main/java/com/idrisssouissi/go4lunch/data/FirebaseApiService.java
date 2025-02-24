@@ -25,17 +25,18 @@ import javax.inject.Inject;
 
 public class FirebaseApiService {
 
-    FirebaseFirestore db;
-
-    static {
-        FirebaseFirestore.getInstance();
-    }
+    public FirebaseFirestore db;
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     @Inject
     public FirebaseApiService() {
         db = FirebaseFirestore.getInstance();
+    }
+
+    // 🔹 Ajout du constructeur permettant d'injecter Firestore
+    public FirebaseApiService(FirebaseFirestore db) {
+        this.db = db;
     }
 
     public void createUserInFirestore(FirebaseUser user, Runnable completion) {

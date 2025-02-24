@@ -68,7 +68,11 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     testImplementation("org.mockito:mockito-core:5.11.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0") // Pour mocker les classes finales et statiques
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("org.powermock:powermock-module-junit4:2.0.9")
+    testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
+
+    testImplementation("org.powermock:powermock-classloading-xstream:2.0.9")// Pour mocker les classes finales et statiques
 
     // Pour les ViewModels et autres composants Android
     testImplementation("androidx.arch.core:core-testing:2.2.0")
