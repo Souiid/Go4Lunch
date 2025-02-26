@@ -40,7 +40,7 @@ public class HomeViewModel extends ViewModel {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
     private final FirebaseApiService firebaseApiService;
-    private final MutableLiveData<Boolean> isUserConnected = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isUserConnected = new MutableLiveData<>();
     private final LocationRepository locationRepository;
 
 
@@ -240,7 +240,6 @@ public class HomeViewModel extends ViewModel {
             return String.format("%.1f km", distanceInKilometers);
         }
     }
-
 
 
     public String getIsRestaurantSelected() {

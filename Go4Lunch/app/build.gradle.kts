@@ -63,29 +63,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    testImplementation(libs.junit)
-    testImplementation(libs.core)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-
-    testImplementation("org.mockito:mockito-core:5.11.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("org.powermock:powermock-module-junit4:2.0.9")
-    testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
-
-    testImplementation("org.powermock:powermock-classloading-xstream:2.0.9")// Pour mocker les classes finales et statiques
-
-    // Pour les ViewModels et autres composants Android
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
-
-    testImplementation("org.robolectric:robolectric:4.11.1")
-
-    testImplementation("org.powermock:powermock-module-junit4:2.0.9")
-    testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
-    testImplementation("org.powermock:powermock-classloading-xstream:2.0.9")
-
-
-
 
     // FIREBASE
     implementation(platform(libs.firebase.bom))
@@ -135,6 +112,25 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("com.google.guava:guava:31.0.1-android")
 
+    //Test
+    testImplementation(libs.junit)
+    testImplementation(libs.core)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.powermock.module.junit4)
+    testImplementation(libs.powermock.api.mockito2)
+    testImplementation(libs.powermock.classloading.xstream)// Pour mocker les classes finales et statiques
+    testImplementation(libs.core.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.powermock.classloading.xstream)
+    androidTestImplementation(libs.espresso.intents)
+    androidTestImplementation(libs.espresso.contrib)
+    androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.core.testing)
+    androidTestImplementation(libs.rules)
+    androidTestImplementation("androidx.test:runner:1.6.2")
 }
 
 configurations.all {

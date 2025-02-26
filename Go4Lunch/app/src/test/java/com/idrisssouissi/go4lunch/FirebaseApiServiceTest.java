@@ -95,10 +95,6 @@ public class FirebaseApiServiceTest {
         successCaptor.getValue().onSuccess(null);
         verify(mockCompletion).accept(null);
     }
-
-
-
-
 }
 
 
