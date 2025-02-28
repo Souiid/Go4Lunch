@@ -514,9 +514,4 @@ public class HomeViewModelTest {
         // THEN - Vérifier que la méthode retourne null
         assertNull(currentUser);
     }
-
-
-
-
-
 }
