@@ -27,11 +27,10 @@ public class RestaurantApiServiceTest {
 
     @Test
     public void testFetchNearbyRestaurants_success() throws IOException {
-        // Création d'une réponse simulée
         NearbySearchResponse mockResponse = new NearbySearchResponse();
         mockResponse.results = new ArrayList<>();
 
-        for (int i = 1; i <= 5; i++) { // Test avec 5 restaurants
+        for (int i = 1; i <= 5; i++) {
             NearbySearchResponse.RestaurantResult mockResult = new NearbySearchResponse.RestaurantResult();
             mockResult.placeId = String.valueOf(i);
             mockResult.name = "Restaurant " + i;
@@ -45,10 +44,8 @@ public class RestaurantApiServiceTest {
 
         fakeRestaurantApi.setMockResponse(mockResponse);
 
-        // Exécuter la méthode
         List<Restaurant> restaurants = restaurantApiService.fetchNearbyRestaurants(48.8566, 2.3522);
 
-        // Vérifications
         assertNotNull(restaurants);
         assertEquals(5, restaurants.size());
     }

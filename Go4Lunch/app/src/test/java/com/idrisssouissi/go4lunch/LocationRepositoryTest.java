@@ -27,31 +27,18 @@ public class LocationRepositoryTest {
 
     @Test
     public void testSetLastLocation_updatesLiveData() {
-        // Arrange
         LatLng expectedLocation = new LatLng(40.7128, -74.0060);
-
-        // Act
         locationRepository.setLastLocation(expectedLocation);
-
-        // Assert
         assertEquals(expectedLocation, locationRepository.getLastLocation().getValue());
     }
 
     @Test
     public void testObserverReceivesUpdates() {
-        // Arrange
         Observer<LatLng> observer = Mockito.mock(Observer.class);
         locationRepository.getLastLocation().observeForever(observer);
-
-        LatLng newLocation = new LatLng(48.8566, 2.3522); // Paris
-
-        // Act
+        LatLng newLocation = new LatLng(48.8566, 2.3522);
         locationRepository.setLastLocation(newLocation);
-
-        // Assert
         Mockito.verify(observer).onChanged(newLocation);
-
-        // Cleanup
         locationRepository.getLastLocation().removeObserver(observer);
     }
 }
