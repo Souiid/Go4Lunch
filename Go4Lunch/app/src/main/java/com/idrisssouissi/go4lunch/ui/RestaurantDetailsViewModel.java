@@ -63,6 +63,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         boolean isRestaurantValid = false;
 
         LocalDateTime now = LocalDateTime.now();
+        //TODO: Changer heure ici
         LocalTime limitTime = LocalTime.of(15, 0);
 
         if (isRestaurantSelected) {
@@ -93,6 +94,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     public List<UserItem> getUsersByRestaurantID(String restaurantId) {
         ArrayList<UserItem> usersInRestaurant = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
+        //TODO: Changer heure ici
         LocalTime limitTime = LocalTime.of(15, 0);
 
         for (User user : Objects.requireNonNull(userRepository.getUsersLiveData().getValue())) {

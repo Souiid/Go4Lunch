@@ -12,11 +12,12 @@ public class NotificationScheduler {
        Calendar now = Calendar.getInstance();
        Calendar targetTime = Calendar.getInstance();
 
-       targetTime.set(Calendar.HOUR_OF_DAY, 16);
-       targetTime.set(Calendar.MINUTE, 2);
+       //TODO: Changer l'heure de la notif ici
+       targetTime.set(Calendar.HOUR_OF_DAY, 12);
+       targetTime.set(Calendar.MINUTE, 0);
        targetTime.set(Calendar.SECOND, 0);
 
-       if (now.get(Calendar.HOUR_OF_DAY) >= 17) {
+       if (now.get(Calendar.HOUR_OF_DAY) >= 15) {
            targetTime.add(Calendar.DAY_OF_YEAR, 1);
        }
 

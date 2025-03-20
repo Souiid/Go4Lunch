@@ -100,6 +100,7 @@ public class ListFragment extends Fragment implements RestaurantAdapter.OnRestau
                         LocalTime selectionTime = selectionDateTime.toLocalTime();
 
                         LocalDate today = LocalDate.now();
+                        //TODO: Changer heure ici
                         LocalTime limitTime = LocalTime.of(15, 0);
 
                         if (selectionDate.isEqual(today)) {
