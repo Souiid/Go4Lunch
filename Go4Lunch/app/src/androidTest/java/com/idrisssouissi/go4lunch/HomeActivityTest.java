@@ -37,29 +37,24 @@ public class HomeActivityTest {
 
     @Before
     public void setup() {
-        Intents.init(); // Initialiser Espresso Intents pour vérifier les lancements d'Activity
+        Intents.init();
     }
 
     @After
     public void tearDown() {
-        Intents.release(); // Libérer Espresso Intents après les tests
+        Intents.release();
     }
 
     @Test
     public void testNavLunch_WhenRestaurantSelected() {
-        // GIVEN - Simuler un restaurant sélectionné
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_lunch));
-
-        // THEN - Vérifier que RestaurantDetailsActivity est lancé
         Intents.intended(IntentMatchers.hasComponent(RestaurantDetailsActivity.class.getName()));
     }
 
     @Test
     public void testNavLunch_WhenNoRestaurantSelected() {
-        // GIVEN - Aucun restaurant sélectionné
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_lunch));
 
-        // THEN - Vérifier que le Toast s'affiche
         onView(withText(R.string.you_dont_selected_restaurant))
                 .inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView()))))
                 .check(matches(isDisplayed()));
@@ -67,24 +62,19 @@ public class HomeActivityTest {
 
     @Test
     public void testNavSettings() {
-        // GIVEN - Clic sur "nav_settings"
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_settings));
 
-        // THEN - Vérifier que SettingsActivity est lancé
         Intents.intended(IntentMatchers.hasComponent(SettingsActivity.class.getName()));
     }
 
     @Test
     public void testNavLogout() {
-        // GIVEN - Simulation de clic sur "nav_logout"
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
 
-        // THEN - Vérifier que `viewModel.signOut()` est bien appelé
         HomeViewModel mockViewModel = mock(HomeViewModel.class);
         verify(mockViewModel).signOut();
     }
 
-    // Méthode pour récupérer l'activité en cours
     private Activity getActivity() {
         final Activity[] activity = new Activity[1];
         activityRule.getScenario().onActivity(activity1 -> activity[0] = activity1);
