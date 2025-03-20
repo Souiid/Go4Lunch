@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId = "com.idrisssouissi.go4lunch"
-        minSdk = 26
+        minSdk = 26 //ANDROID 5.0 - 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

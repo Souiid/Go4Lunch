@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:textAlignment="center"
         android:text="@string/find_a_nice_restaurant"
         android:textColor="@color/white"/>
 
